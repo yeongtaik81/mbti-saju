@@ -1,0 +1,46 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">MBTI SAJU Concept 2</title>
+  <desc id="desc">Premium dark emblem with five-elements wheel and floating MBTI corner letters.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="42" y1="30" x2="470" y2="482" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111827"/>
+      <stop offset="1" stop-color="#0B1021"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="95" y1="95" x2="417" y2="417" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FDE68A"/>
+      <stop offset="1" stop-color="#F59E0B"/>
+    </linearGradient>
+    <filter id="goldGlow" x="58" y="58" width="396" height="396" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#F59E0B" flood-opacity="0.35"/>
+      <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+
+  <g filter="url(#goldGlow)">
+    <circle cx="256" cy="256" r="164" fill="#0F172A"/>
+    <circle cx="256" cy="256" r="164" stroke="url(#rim)" stroke-width="4"/>
+
+    <path d="M256 256L256 102A154 154 0 0 1 402.484 208.386Z" fill="#D8B44A"/>
+    <path d="M256 256L402.484 208.386A154 154 0 0 1 346.525 380.614Z" fill="#67CA67"/>
+    <path d="M256 256L346.525 380.614A154 154 0 0 1 165.475 380.614Z" fill="#56A9F1"/>
+    <path d="M256 256L165.475 380.614A154 154 0 0 1 109.516 208.386Z" fill="#F06A5D"/>
+    <path d="M256 256L109.516 208.386A154 154 0 0 1 256 102Z" fill="#667282"/>
+  </g>
+
+  <g fill="#F8FAFC" font-family="Poppins, Montserrat, Segoe UI, sans-serif" font-size="74" font-weight="800" letter-spacing="1.6">
+    <text x="56" y="58" dominant-baseline="hanging">M</text>
+    <text x="456" y="58" dominant-baseline="hanging" text-anchor="end">B</text>
+    <text x="56" y="378" dominant-baseline="hanging">T</text>
+    <text x="456" y="378" dominant-baseline="hanging" text-anchor="end">I</text>
+  </g>
+
+  <g stroke="#94A3B8" stroke-width="1.5" opacity="0.65">
+    <path d="M94 94L176 176"/>
+    <path d="M418 94L336 176"/>
+    <path d="M94 418L176 336"/>
+    <path d="M418 418L336 336"/>
+  </g>
+</svg>

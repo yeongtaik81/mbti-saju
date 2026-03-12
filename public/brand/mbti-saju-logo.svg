@@ -1,0 +1,44 @@
+<svg width="1200" height="360" viewBox="0 0 1200 360" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">MBTI SAJU Brand Logo</title>
+  <desc id="logoDesc">Monochrome MBTI square blocks with an enlarged central five-elements wheel and wordmark.</desc>
+
+  <defs>
+    <filter id="markShadow" x="18" y="18" width="324" height="324" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#0F172A" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="360" rx="36" fill="#FFFFFF"/>
+
+  <g transform="translate(0 0)">
+    <g filter="url(#markShadow)">
+      <rect x="42" y="42" width="138" height="138" rx="20" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6"/>
+      <rect x="188" y="42" width="138" height="138" rx="20" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.6"/>
+      <rect x="42" y="188" width="138" height="138" rx="20" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.6"/>
+      <rect x="188" y="188" width="138" height="138" rx="20" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6"/>
+    </g>
+
+    <path d="M180 180L180 72A108 108 0 0 1 283 147Z" fill="#D9AF3A"/>
+    <path d="M180 180L283 147A108 108 0 0 1 244 267Z" fill="#5FC95A"/>
+    <path d="M180 180L244 267A108 108 0 0 1 116 267Z" fill="#4FA8FF"/>
+    <path d="M180 180L116 267A108 108 0 0 1 77 147Z" fill="#F35B4F"/>
+    <path d="M180 180L77 147A108 108 0 0 1 180 72Z" fill="#4B5563"/>
+
+    <g
+      fill="#0F172A"
+      font-family="Poppins, Montserrat, Segoe UI, sans-serif"
+      font-size="48"
+      font-weight="800"
+      dominant-baseline="hanging"
+    >
+      <text x="56" y="56" text-anchor="start">M</text>
+      <text x="312" y="56" text-anchor="end">B</text>
+      <text x="56" y="278" text-anchor="start">T</text>
+      <text x="312" y="278" text-anchor="end">I</text>
+    </g>
+  </g>
+
+  <text x="384" y="150" fill="#0F172A" font-family="Poppins, Montserrat, Segoe UI, sans-serif" font-size="98" font-weight="800" letter-spacing="1.2">MBTI</text>
+  <text x="384" y="248" fill="#0F172A" font-family="Poppins, Montserrat, Segoe UI, sans-serif" font-size="98" font-weight="700" letter-spacing="2">SAJU</text>
+  <text x="390" y="294" fill="#475569" font-family="Poppins, Montserrat, Segoe UI, sans-serif" font-size="28" font-weight="500" letter-spacing="0.9">FIVE ELEMENTS x PERSONALITY TYPE</text>
+</svg>

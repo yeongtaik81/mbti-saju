@@ -1,0 +1,115 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["summary", "sectionsJson"],
+  "properties": {
+    "summary": {
+      "type": "string"
+    },
+    "sectionsJson": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "overview",
+        "coreSignal",
+        "caution",
+        "actions",
+        "reflectionQuestion",
+        "storyTitle",
+        "sajuEvidence",
+        "sajuBasis",
+        "subjectLens",
+        "narrativeFlow",
+        "tenYearFlow",
+        "currentDaewoon",
+        "yearlyFlow",
+        "wealthFlow",
+        "relationshipFlow",
+        "pairDynamic",
+        "attractionPoint",
+        "conflictTrigger",
+        "communicationTip",
+        "relationshipLens",
+        "careerMoneyLens",
+        "timingHint"
+      ],
+      "properties": {
+        "overview": {
+          "type": "string"
+        },
+        "coreSignal": {
+          "type": "string"
+        },
+        "caution": {
+          "type": "string"
+        },
+        "actions": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "string"
+          }
+        },
+        "reflectionQuestion": {
+          "type": "string"
+        },
+        "storyTitle": {
+          "type": ["string", "null"]
+        },
+        "sajuEvidence": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "sajuBasis": {
+          "type": ["string", "null"]
+        },
+        "subjectLens": {
+          "type": ["string", "null"]
+        },
+        "narrativeFlow": {
+          "type": ["string", "null"]
+        },
+        "tenYearFlow": {
+          "type": ["string", "null"]
+        },
+        "currentDaewoon": {
+          "type": ["string", "null"]
+        },
+        "yearlyFlow": {
+          "type": ["string", "null"]
+        },
+        "wealthFlow": {
+          "type": ["string", "null"]
+        },
+        "relationshipFlow": {
+          "type": ["string", "null"]
+        },
+        "pairDynamic": {
+          "type": ["string", "null"]
+        },
+        "attractionPoint": {
+          "type": ["string", "null"]
+        },
+        "conflictTrigger": {
+          "type": ["string", "null"]
+        },
+        "communicationTip": {
+          "type": ["string", "null"]
+        },
+        "relationshipLens": {
+          "type": ["string", "null"]
+        },
+        "careerMoneyLens": {
+          "type": ["string", "null"]
+        },
+        "timingHint": {
+          "type": ["string", "null"]
+        }
+      }
+    }
+  }
+}

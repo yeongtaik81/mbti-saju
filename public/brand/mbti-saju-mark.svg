@@ -1,0 +1,38 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="markTitle markDesc">
+  <title id="markTitle">MBTI SAJU Square Mark</title>
+  <desc id="markDesc">Monochrome MBTI square blocks with an enlarged central five-elements wheel.</desc>
+
+  <defs>
+    <filter id="shadow" x="30" y="30" width="452" height="452" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#0F172A" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="88" fill="#F8FAFC"/>
+
+  <g filter="url(#shadow)">
+    <rect x="56" y="56" width="196" height="196" rx="28" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="2"/>
+    <rect x="260" y="56" width="196" height="196" rx="28" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="2"/>
+    <rect x="56" y="260" width="196" height="196" rx="28" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="2"/>
+    <rect x="260" y="260" width="196" height="196" rx="28" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="2"/>
+  </g>
+
+  <path d="M256 256L256 96A160 160 0 0 1 408 207Z" fill="#D9AF3A"/>
+  <path d="M256 256L408 207A160 160 0 0 1 350 385Z" fill="#5FC95A"/>
+  <path d="M256 256L350 385A160 160 0 0 1 162 385Z" fill="#4FA8FF"/>
+  <path d="M256 256L162 385A160 160 0 0 1 104 207Z" fill="#F35B4F"/>
+  <path d="M256 256L104 207A160 160 0 0 1 256 96Z" fill="#4B5563"/>
+
+  <g
+    fill="#0F172A"
+    font-family="Poppins, Montserrat, Segoe UI, sans-serif"
+    font-size="72"
+    font-weight="800"
+    dominant-baseline="hanging"
+  >
+    <text x="74" y="74" text-anchor="start">M</text>
+    <text x="438" y="74" text-anchor="end">B</text>
+    <text x="74" y="386" text-anchor="start">T</text>
+    <text x="438" y="386" text-anchor="end">I</text>
+  </g>
+</svg>

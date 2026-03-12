@@ -1,0 +1,50 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">MBTI SAJU Concept 1</title>
+  <desc id="desc">Clean orbit style mark with five-elements wheel and corner MBTI letters.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="32" y1="32" x2="480" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#EEF2FF"/>
+    </linearGradient>
+    <linearGradient id="orbit" x1="88" y1="88" x2="424" y2="424" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0EA5E9"/>
+      <stop offset="0.5" stop-color="#22C55E"/>
+      <stop offset="1" stop-color="#F59E0B"/>
+    </linearGradient>
+    <filter id="softShadow" x="48" y="48" width="416" height="416" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="10" flood-color="#0F172A" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+
+  <g filter="url(#softShadow)">
+    <circle cx="256" cy="256" r="178" fill="#FFFFFF"/>
+    <circle cx="256" cy="256" r="166" stroke="url(#orbit)" stroke-width="6"/>
+
+    <path d="M256 256L256 100A156 156 0 0 1 404.386 208.077Z" fill="#D6AF43"/>
+    <path d="M256 256L404.386 208.077A156 156 0 0 1 347.686 382.923Z" fill="#6BCB62"/>
+    <path d="M256 256L347.686 382.923A156 156 0 0 1 164.314 382.923Z" fill="#4D9FEA"/>
+    <path d="M256 256L164.314 382.923A156 156 0 0 1 107.614 208.077Z" fill="#EE665C"/>
+    <path d="M256 256L107.614 208.077A156 156 0 0 1 256 100Z" fill="#5E697A"/>
+  </g>
+
+  <g fill="#0F172A" font-family="Poppins, Montserrat, Segoe UI, sans-serif" font-size="76" font-weight="800">
+    <text x="56" y="58" dominant-baseline="hanging">M</text>
+    <text x="456" y="58" dominant-baseline="hanging" text-anchor="end">B</text>
+    <text x="56" y="378" dominant-baseline="hanging">T</text>
+    <text x="456" y="378" dominant-baseline="hanging" text-anchor="end">I</text>
+  </g>
+
+  <g fill="#334155">
+    <circle cx="256" cy="66" r="4"/>
+    <circle cx="401" cy="111" r="4"/>
+    <circle cx="446" cy="256" r="4"/>
+    <circle cx="401" cy="401" r="4"/>
+    <circle cx="256" cy="446" r="4"/>
+    <circle cx="111" cy="401" r="4"/>
+    <circle cx="66" cy="256" r="4"/>
+    <circle cx="111" cy="111" r="4"/>
+  </g>
+</svg>

@@ -1,0 +1,313 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum MbtiType {
+  INTJ
+  INTP
+  ENTJ
+  ENTP
+  INFJ
+  INFP
+  ENFJ
+  ENFP
+  ISTJ
+  ISFJ
+  ESTJ
+  ESFJ
+  ISTP
+  ISFP
+  ESTP
+  ESFP
+}
+
+enum MbtiSourceType {
+  DIRECT
+  MINI_TEST
+  FULL_TEST
+}
+
+enum MbtiEngagementEventType {
+  PAGE_VIEW
+  RESULT_VIEWED
+  RESULT_SAVED
+}
+
+enum MbtiTestMode {
+  MINI
+  FULL
+}
+
+enum BirthCalendarType {
+  SOLAR
+  LUNAR
+}
+
+enum BirthCountryType {
+  KOREA
+  OTHER
+}
+
+enum ReadingType {
+  SELF
+  COMPATIBILITY
+}
+
+enum ChargeStatus {
+  CHARGED
+  SKIPPED_DUPLICATE
+}
+
+enum ReadingCacheScope {
+  STATIC
+  YEARLY
+  MONTHLY
+  DAILY
+}
+
+enum GenerationFailureStage {
+  RULE_DRAFT
+  LLM_RENDER
+  CODE_VALIDATE
+  LLM_REVIEW
+  FINAL_GUARD
+  PERSIST
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum SignupSource {
+  DIRECT
+  MBTI_FREE
+}
+
+model User {
+  id                      String                   @id @default(cuid())
+  email                   String                   @unique
+  role                    UserRole                 @default(USER)
+  signupSource            SignupSource             @default(DIRECT)
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  credential              AuthCredential?
+  profile                 UserProfile?
+  mbtiProfile             MbtiProfile?
+  wallet                  SajuItemWallet?
+  partners                PartnerProfile[]
+  readings                SajuReading[]
+  generationFailures      SajuGenerationFailure[]
+  mbtiEngagementEvents    MbtiEngagementEvent[]
+  mockPaymentTransactions MockPaymentTransaction[]
+  walletAdjustmentsMade   AdminWalletAdjustment[]  @relation("AdminWalletAdjustmentActor")
+  walletAdjustmentsTarget AdminWalletAdjustment[]  @relation("AdminWalletAdjustmentTarget")
+}
+
+model AuthCredential {
+  userId       String   @id
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserProfile {
+  userId             String            @id
+  name               String
+  birthDateTime      DateTime
+  birthDate          String?
+  birthTime          String?
+  isBirthTimeUnknown Boolean           @default(false)
+  birthCalendarType  BirthCalendarType @default(SOLAR)
+  isLeapMonth        Boolean           @default(false)
+  birthCountryType   BirthCountryType  @default(KOREA)
+  birthCountry       String?
+  birthPlace         String
+  gender             Gender
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model MbtiProfile {
+  userId     String         @id
+  mbtiType   MbtiType
+  sourceType MbtiSourceType
+  decidedAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model MbtiEngagementEvent {
+  id              String                  @id @default(cuid())
+  userId          String?
+  sessionId       String
+  isAuthenticated Boolean                 @default(false)
+  eventType       MbtiEngagementEventType
+  testType        MbtiTestMode?
+  mbtiType        MbtiType?
+  pagePath        String?
+  createdAt       DateTime                @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt(sort: Desc)])
+  @@index([eventType, createdAt(sort: Desc)])
+  @@index([isAuthenticated, eventType, createdAt(sort: Desc)])
+  @@index([sessionId, createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([testType, eventType, createdAt(sort: Desc)])
+}
+
+model SajuItemWallet {
+  userId    String   @id
+  balance   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SajuResultCache {
+  cacheKey        String              @id
+  resultJson      Json
+  scope           ReadingCacheScope?
+  periodKey       String?
+  metadataJson    Json?
+  ruleVersion     String
+  templateVersion String
+  promptVersion   String
+  modelVersion    String
+  createdAt       DateTime            @default(now())
+  hit             SajuResultCacheHit?
+  readings        SajuReading[]
+
+  @@index([scope, periodKey])
+}
+
+model SajuResultCacheHit {
+  cacheKey  String          @id
+  hitCount  Int             @default(0)
+  lastHitAt DateTime        @default(now())
+  cache     SajuResultCache @relation(fields: [cacheKey], references: [cacheKey], onDelete: Cascade)
+}
+
+model PartnerProfile {
+  id                 String            @id @default(cuid())
+  ownerUserId        String
+  name               String
+  relationship       String?
+  birthDateTime      DateTime
+  birthDate          String?
+  birthTime          String?
+  isBirthTimeUnknown Boolean           @default(false)
+  birthCalendarType  BirthCalendarType @default(SOLAR)
+  isLeapMonth        Boolean           @default(false)
+  birthPlace         String
+  gender             Gender
+  mbtiType           MbtiType?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  ownerUser        User          @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  readingsAsFirst  SajuReading[] @relation("SajuReadingFirstPartner")
+  readingsAsSecond SajuReading[] @relation("SajuReadingSecondPartner")
+
+  @@index([ownerUserId])
+}
+
+model SajuReading {
+  id             String       @id @default(cuid())
+  userId         String
+  readingType    ReadingType
+  subjectType    String
+  firstPartnerId String?
+  partnerId      String?
+  cacheKey       String?
+  cacheHit       Boolean      @default(false)
+  chargeStatus   ChargeStatus
+  itemCost       Int          @default(1)
+  createdAt      DateTime     @default(now())
+
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstPartner PartnerProfile?    @relation("SajuReadingFirstPartner", fields: [firstPartnerId], references: [id], onDelete: SetNull)
+  partner      PartnerProfile?    @relation("SajuReadingSecondPartner", fields: [partnerId], references: [id], onDelete: SetNull)
+  cache        SajuResultCache?   @relation(fields: [cacheKey], references: [cacheKey], onDelete: SetNull)
+  result       SajuReadingResult?
+
+  @@unique([userId, cacheKey])
+  @@index([firstPartnerId])
+  @@index([userId, createdAt(sort: Desc)])
+}
+
+model SajuReadingResult {
+  readingId    String   @id
+  summary      String
+  sectionsJson Json
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  reading SajuReading @relation(fields: [readingId], references: [id], onDelete: Cascade)
+}
+
+model MockPaymentTransaction {
+  id             String   @id @default(cuid())
+  userId         String
+  idempotencyKey String
+  amount         Int
+  createdAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, idempotencyKey])
+  @@index([userId, createdAt(sort: Desc)])
+}
+
+model SajuGenerationFailure {
+  id            String                 @id @default(cuid())
+  userId        String
+  readingType   ReadingType
+  subjectType   String
+  cacheKey      String?
+  periodScope   ReadingCacheScope?
+  periodKey     String?
+  stage         GenerationFailureStage
+  reasonCode    String
+  reasonMessage String
+  detailJson    Json?
+  createdAt     DateTime               @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([cacheKey])
+  @@index([stage, createdAt(sort: Desc)])
+}
+
+model AdminWalletAdjustment {
+  id            String   @id @default(cuid())
+  adminUserId   String
+  targetUserId  String
+  amount        Int
+  balanceBefore Int
+  balanceAfter  Int
+  reason        String
+  createdAt     DateTime @default(now())
+
+  adminUser  User @relation("AdminWalletAdjustmentActor", fields: [adminUserId], references: [id], onDelete: Cascade)
+  targetUser User @relation("AdminWalletAdjustmentTarget", fields: [targetUserId], references: [id], onDelete: Cascade)
+
+  @@index([adminUserId, createdAt(sort: Desc)])
+  @@index([targetUserId, createdAt(sort: Desc)])
+}
