@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">1조 프로젝트</string>
+    <string name="nav_dashboard">대시보드</string>
+    <string name="nav_positions">포지션</string>
+    <string name="nav_trades">매매내역</string>
+    <string name="nav_settings">설정</string>
+    <string name="nav_logs">로그</string>
+    <string name="engine_idle">대기</string>
+    <string name="engine_pre_market">장전준비</string>
+    <string name="engine_trading">매매중</string>
+    <string name="engine_paused">일시정지</string>
+    <string name="engine_post_market">장후정리</string>
+    <string name="regime_bull">상승장</string>
+    <string name="regime_bear">하락장</string>
+    <string name="regime_neutral">보합장</string>
+    <string name="notification_channel_name">매매 엔진</string>
+    <string name="notification_channel_desc">자동매매 엔진 상태 알림</string>
+</resources>

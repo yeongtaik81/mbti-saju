@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+.next/
+out/
+build/
+
+# Database
+*.db
+*.db-wal
+*.db-shm
+apps/engine/data/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+
+# Android
+*.apk
+*.aab
+.gradle/
+apps/app/app/build/
+apps/app/build/
+apps/app/.gradle/
+apps/app/local.properties
+
+# Lock files (keep pnpm-lock.yaml)
+package-lock.json
+yarn.lock

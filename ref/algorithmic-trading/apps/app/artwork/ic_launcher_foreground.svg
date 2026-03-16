@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="halo" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(488 500) rotate(90) scale(326 326)">
+      <stop offset="0" stop-color="#7AE4FF" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#7AE4FF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="barFill" x1="272" y1="356" x2="640" y2="786" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#A7EDFF"/>
+      <stop offset="1" stop-color="#319EFA"/>
+    </linearGradient>
+    <linearGradient id="arrowFill" x1="236" y1="698" x2="780" y2="286" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#54E0AF"/>
+      <stop offset="1" stop-color="#D0F55F"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="488" cy="500" r="326" fill="url(#halo)"/>
+
+  <rect x="268" y="556" width="92" height="208" rx="46" fill="url(#barFill)"/>
+  <rect x="404" y="472" width="92" height="292" rx="46" fill="url(#barFill)"/>
+  <rect x="540" y="348" width="92" height="416" rx="46" fill="url(#barFill)"/>
+
+  <rect x="292" y="590" width="16" height="134" rx="8" fill="#FFFFFF" fill-opacity="0.32"/>
+  <rect x="428" y="506" width="16" height="198" rx="8" fill="#FFFFFF" fill-opacity="0.32"/>
+  <rect x="564" y="382" width="16" height="266" rx="8" fill="#FFFFFF" fill-opacity="0.32"/>
+
+  <path d="M236 666C324 666 386 628 456 572C536 508 620 448 716 328" fill="none" stroke="url(#arrowFill)" stroke-width="84" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M658 326L780 296L744 418" fill="none" stroke="url(#arrowFill)" stroke-width="84" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <circle cx="460" cy="572" r="24" fill="#F6FFF8"/>
+  <circle cx="604" cy="458" r="24" fill="#F6FFF8"/>
+</svg>

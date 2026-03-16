@@ -1,0 +1,40 @@
+{
+  "name": "@trading/engine",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./strategy": {
+      "import": "./dist/strategy/index.js",
+      "types": "./dist/strategy/index.d.ts"
+    },
+    "./strategy/lab": {
+      "import": "./dist/strategy/lab/index.js",
+      "types": "./dist/strategy/lab/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "bash -c 'shopt -s globstar && node --import tsx --test src/**/*.test.ts'",
+    "start": "node --import dotenv/config dist/index.js",
+    "start:dev": "tsx --import dotenv/config src/index.ts",
+    "db:init": "tsx src/db/init.ts",
+    "verify:kis": "tsx src/scripts/verify-kis.ts",
+    "collect:candles": "tsx src/scripts/collect-candles.ts",
+    "collect:minute": "tsx src/scripts/collect-minute-candles.ts",
+    "optimize:strategies": "tsx src/scripts/optimize-strategies.ts"
+  },
+  "dependencies": {
+    "@trading/shared": "workspace:*",
+    "better-sqlite3": "^11.7.0",
+    "dotenv": "^17.3.1",
+    "ws": "^8.19.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/ws": "^8.18.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
