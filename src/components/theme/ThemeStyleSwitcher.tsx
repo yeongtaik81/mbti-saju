@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Check, ChevronDown, Palette, Sparkles } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
@@ -26,6 +27,7 @@ const THEME_OPTIONS: ThemeOption[] = [
 ];
 
 export function ThemeStyleSwitcher({ className }: { className?: string }) {
+  const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
@@ -82,6 +84,10 @@ export function ThemeStyleSwitcher({ className }: { className?: string }) {
     return null;
   }
 
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <div ref={containerRef} className={cn('relative', className)}>
       <Button
@@ -89,6 +95,7 @@ export function ThemeStyleSwitcher({ className }: { className?: string }) {
         variant="outline"
         size="sm"
         className="size-9 p-0 sm:h-9 sm:w-auto sm:gap-1.5 sm:px-3"
+        aria-label={`테마 선택, 현재 ${activeOption.label}`}
         aria-expanded={open}
         aria-haspopup="menu"
         onClick={() => setOpen((current) => !current)}

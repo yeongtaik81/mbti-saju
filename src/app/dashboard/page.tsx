@@ -60,6 +60,7 @@ import {
 import { cn } from '@/lib/utils';
 import { partnerCreateSchema } from '@/lib/validators/saju';
 import { LoadingOverlay } from '@/components/loading/LoadingOverlay';
+import { PageLoadingState } from '@/components/loading/PageLoadingState';
 import { ThemedBrandLogo } from '@/components/theme/ThemedBrandLogo';
 
 type OnboardingResponse = {
@@ -150,6 +151,19 @@ const COMPATIBILITY_SCENARIO_CATEGORIES =
 
 type ScenarioCategory = (typeof SELF_SCENARIO_CATEGORIES)[number];
 
+function getCategoryCodeForScenario(
+  categories: readonly ScenarioCategory[],
+  scenarioCode: ScenarioCode
+): ScenarioCategoryCode {
+  return (
+    categories.find((category) =>
+      category.options.some((option) => option.code === scenarioCode)
+    )?.code ??
+    categories[0]?.code ??
+    'SELF_TIMING'
+  );
+}
+
 function toPartnerProfileKey(partnerId: string): ProfileSelectKey {
   return `PARTNER:${partnerId}`;
 }
@@ -202,6 +216,22 @@ function getReadingCardHint(
   subjectType: string
 ): string | null {
   if (readingType === 'COMPATIBILITY') {
+    if (subjectType === 'COMPAT_BASIC') {
+      return '두 사람 전체 흐름을 살핀 궁합';
+    }
+
+    if (subjectType === 'COMPAT_ROMANCE_LOVER') {
+      return '지금 관계의 안정감을 본 궁합';
+    }
+
+    if (subjectType === 'COMPAT_ROMANCE_MARRIAGE_PARTNER') {
+      return '오래 갈 생활 합을 본 궁합';
+    }
+
+    if (subjectType === 'COMPAT_ROMANCE_MARRIED') {
+      return '함께 사는 리듬을 본 궁합';
+    }
+
     if (subjectType === 'COMPAT_ROMANCE_LEFT_ON_READ') {
       return '답이 늦어지는 이유를 본 궁합';
     }
@@ -215,7 +245,7 @@ function getReadingCardHint(
     }
 
     if (subjectType.startsWith('COMPAT_ROMANCE_')) {
-      return '두 사람의 속도를 본 궁합';
+      return '두 사람 감정 속도를 본 궁합';
     }
 
     if (subjectType === 'COMPAT_FRIEND_CUT_OFF') {
@@ -254,51 +284,136 @@ function getReadingCardHint(
       return '왜 강하게 끌리는지 본 궁합';
     }
 
-    return '두 사람 사이의 결을 본 궁합';
+    return '두 사람 관계 흐름을 살핀 궁합';
   }
 
   switch (subjectType) {
     case 'SELF_YEARLY_FORTUNE':
-      return '올해 힘이 붙는 곳을 본 풀이';
+      return '올해 힘이 붙는 곳을 읽은 풀이';
     case 'SELF_DAILY_FORTUNE':
-      return '오늘의 리듬을 본 풀이';
+      return '오늘 리듬을 가볍게 짚은 풀이';
     case 'SELF_DAEUN':
-      return '지금 10년 운을 본 풀이';
+      return '지금 10년 흐름을 읽은 풀이';
     case 'SELF_LIFETIME_FLOW':
-      return '길게 이어지는 운을 본 풀이';
+      return '평생 흐름을 길게 읽은 풀이';
     case 'SELF_LOVE_RECONCILIATION':
-      return '다시 이어질 여지를 본 풀이';
+      return '재회 가능성을 짚은 풀이';
     case 'SELF_LOVE_CONTACT_RETURN':
-      return '다시 연락 흐름을 본 풀이';
+      return '다시 연락 흐름을 짚은 풀이';
     case 'SELF_LOVE_CONFESSION_TIMING':
-      return '마음을 꺼낼 때를 본 풀이';
+      return '고백 타이밍을 짚은 풀이';
     case 'SELF_MARRIAGE_GENERAL':
-      return '오래 가는 관계를 본 풀이';
+      return '오래 갈 관계를 읽은 풀이';
     case 'SELF_CAREER_GENERAL':
-      return '일에서 힘이 붙는 방향을 본 풀이';
+      return '일 방향을 읽은 풀이';
     case 'SELF_CAREER_APTITUDE':
-      return '맞는 일의 결을 본 풀이';
+      return '잘 맞는 일을 짚은 풀이';
     case 'SELF_CAREER_JOB_CHANGE':
-      return '옮길 때를 본 풀이';
+      return '이직 타이밍을 짚은 풀이';
     case 'SELF_WEALTH_GENERAL':
-      return '돈의 흐름을 본 풀이';
+      return '돈 흐름을 읽은 풀이';
     case 'SELF_WEALTH_ACCUMULATION':
-      return '돈이 붙는 길을 본 풀이';
+      return '돈이 붙는 길을 짚은 풀이';
     case 'SELF_WEALTH_LEAK':
-      return '돈이 새는 틈을 본 풀이';
+      return '돈이 새는 이유를 짚은 풀이';
     case 'SELF_RELATIONSHIP_GENERAL':
-      return '사람 사이의 거리를 본 풀이';
+      return '사람 사이 거리감을 본 풀이';
     case 'SELF_RELATIONSHIP_CUT_OFF':
-      return '거리 조절을 본 풀이';
+      return '관계 정리 타이밍을 본 풀이';
     case 'SELF_FAMILY_GENERAL':
-      return '가족 안의 감정 결을 본 풀이';
+      return '가족 안의 감정 흐름을 본 풀이';
     case 'SELF_FAMILY_PARENTS':
-      return '부모와의 관계를 본 풀이';
+      return '부모와 거리감을 본 풀이';
     case 'SELF_LUCK_UP':
-      return '운을 살리는 기준을 본 풀이';
+      return '운을 살리는 생활 기준을 본 풀이';
     default:
-      return '지금 들어온 운을 본 풀이';
+      return '지금 흐름을 읽은 풀이';
   }
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+const FOCUSED_SELF_PREVIEW_CODES = new Set<ScenarioCode>([
+  'SELF_LOVE_RECONCILIATION',
+  'SELF_LOVE_CONTACT_RETURN',
+  'SELF_LOVE_CONFESSION_TIMING',
+  'SELF_CAREER_APTITUDE',
+  'SELF_CAREER_JOB_CHANGE',
+  'SELF_WEALTH_ACCUMULATION',
+  'SELF_WEALTH_LEAK',
+  'SELF_RELATIONSHIP_CUT_OFF',
+  'SELF_FAMILY_PARENTS'
+]);
+
+function splitSummarySentences(summary: string): string[] {
+  return summary
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+}
+
+function trimPreviewText(text: string, maxLength = 120): string {
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  return `${text.slice(0, maxLength).trimEnd()}…`;
+}
+
+function getReadingSummaryPreview(
+  readingType: 'SELF' | 'COMPATIBILITY',
+  subjectType: string,
+  summary: string | null
+): string {
+  const fallback = getScenarioFallbackSummary(readingType, subjectType);
+  if (!summary) {
+    return fallback;
+  }
+
+  let normalized = summary.trim();
+  normalized = normalized
+    .replace(/^["']+/, '')
+    .replace(/["']+$/, '')
+    .trim();
+
+  const label = getScenarioLabel(readingType, subjectType);
+  const labelCandidates = [
+    label,
+    label.replace(/\s*해석$/, '').trim(),
+    label.replace(/\s*궁합$/, '').trim()
+  ].filter(Boolean);
+
+  for (const candidate of labelCandidates) {
+    const labelPrefix = new RegExp(`^${escapeRegExp(candidate)}\\s*:\\s*`);
+    normalized = normalized.replace(labelPrefix, '').trim();
+  }
+
+  normalized = normalized
+    .replace(/^["']+/, '')
+    .replace(/["']+$/, '')
+    .trim();
+  normalized = normalized.replace(/\s+/g, ' ').trim();
+
+  if (!normalized) {
+    return fallback;
+  }
+
+  const scenario = getScenarioOption(subjectType);
+  const sentences = splitSummarySentences(normalized);
+  const prefersQuestionFirstPreview =
+    readingType === 'SELF' &&
+    Boolean(scenario && FOCUSED_SELF_PREVIEW_CODES.has(scenario.code));
+
+  if (prefersQuestionFirstPreview && sentences.length > 1) {
+    const prioritized = sentences.slice(1, 3).join(' ').trim();
+    if (prioritized) {
+      return trimPreviewText(prioritized);
+    }
+  }
+
+  return trimPreviewText(sentences.slice(0, 2).join(' ').trim() || normalized);
 }
 
 function ScenarioCategorySection({
@@ -306,6 +421,7 @@ function ScenarioCategorySection({
   selectedCode,
   expanded,
   creating,
+  actionLabel,
   onToggle,
   onSelect,
   onStartReading
@@ -314,6 +430,7 @@ function ScenarioCategorySection({
   selectedCode: ScenarioCode;
   expanded: boolean;
   creating: boolean;
+  actionLabel: string;
   onToggle: (categoryCode: ScenarioCategoryCode) => void;
   onSelect: (
     scenarioCode: ScenarioCode,
@@ -326,11 +443,11 @@ function ScenarioCategorySection({
       <button
         type="button"
         onClick={() => onToggle(category.code)}
-        className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left"
+        className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left sm:px-4 sm:py-3"
       >
         <div>
           <p className="text-sm font-semibold">{category.label}</p>
-          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+          <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground sm:text-xs">
             {category.description}
           </p>
           <p className="mt-1 text-[11px] text-muted-foreground">
@@ -346,14 +463,14 @@ function ScenarioCategorySection({
       </button>
 
       {expanded ? (
-        <div className="grid gap-2 border-t px-4 py-3">
+        <div className="grid gap-2 border-t px-3 py-2.5 sm:px-4 sm:py-3">
           {category.options.map((option) => {
             const isSelected = option.code === selectedCode;
             return (
               <div
                 key={option.code}
                 className={cn(
-                  'rounded-lg border px-3 py-3 text-left transition-colors',
+                  'rounded-lg border px-2.5 py-2.5 text-left transition-colors sm:px-3 sm:py-3',
                   isSelected
                     ? 'border-primary bg-primary text-primary-foreground'
                     : 'bg-background hover:border-foreground/40'
@@ -387,11 +504,11 @@ function ScenarioCategorySection({
                       type="button"
                       size="sm"
                       variant="secondary"
-                      className="shrink-0 bg-background/90 text-foreground hover:bg-background"
+                      className="h-8 shrink-0 bg-background/90 px-2.5 text-xs text-foreground hover:bg-background sm:h-9 sm:px-3 sm:text-sm"
                       disabled={creating}
                       onClick={onStartReading}
                     >
-                      {creating ? '풀이 중...' : '해석하기'}
+                      {creating ? '풀이 중...' : actionLabel}
                     </Button>
                   ) : null}
                 </div>
@@ -424,13 +541,21 @@ export default function DashboardPage() {
   ] = useState<ScenarioCode>(() => getDefaultScenarioCode('COMPATIBILITY'));
   const [expandedSelfCategoryCodes, setExpandedSelfCategoryCodes] = useState<
     ScenarioCategoryCode[]
-  >(() => SELF_SCENARIO_CATEGORIES.map((category) => category.code));
+  >(() => [
+    getCategoryCodeForScenario(
+      SELF_SCENARIO_CATEGORIES,
+      getDefaultScenarioCode('SELF')
+    )
+  ]);
   const [
     expandedCompatibilityCategoryCodes,
     setExpandedCompatibilityCategoryCodes
-  ] = useState<ScenarioCategoryCode[]>(() =>
-    COMPATIBILITY_SCENARIO_CATEGORIES.map((category) => category.code)
-  );
+  ] = useState<ScenarioCategoryCode[]>(() => [
+    getCategoryCodeForScenario(
+      COMPATIBILITY_SCENARIO_CATEGORIES,
+      getDefaultScenarioCode('COMPATIBILITY')
+    )
+  ]);
   const [selectedSingleProfileKey, setSelectedSingleProfileKey] =
     useState<ProfileSelectKey>(SELF_PROFILE_KEY);
   const [selectedFirstProfileKey, setSelectedFirstProfileKey] =
@@ -463,6 +588,7 @@ export default function DashboardPage() {
   const [mbti, setMbti] = useState<OnboardingResponse['mbti']>(null);
   const [partners, setPartners] = useState<PartnerItem[]>([]);
   const [readings, setReadings] = useState<ReadingItem[]>([]);
+  const [showAllReadings, setShowAllReadings] = useState(false);
   const [savingPartner, setSavingPartner] = useState(false);
   const [deletingPartner, setDeletingPartner] = useState(false);
   const [deletingReading, setDeletingReading] = useState(false);
@@ -1099,6 +1225,14 @@ export default function DashboardPage() {
     [readingType, selectedSelfScenarioCode, selectedCompatibilityScenarioCode]
   );
 
+  const visibleReadings = useMemo(
+    () => (showAllReadings ? readings : readings.slice(0, 8)),
+    [readings, showAllReadings]
+  );
+
+  const needsTopUp = itemBalance <= 0;
+  const primaryActionLabel = needsTopUp ? '복 충전 후 해석하기' : '해석하기';
+
   const dashboardBlockingOverlay = useMemo(() => {
     if (savingPartner) {
       return {
@@ -1138,9 +1272,7 @@ export default function DashboardPage() {
           : setExpandedCompatibilityCategoryCodes;
 
       setter((current) =>
-        current.includes(categoryCode)
-          ? current.filter((code) => code !== categoryCode)
-          : [...current, categoryCode]
+        current.includes(categoryCode) ? [] : [categoryCode]
       );
     },
     []
@@ -1179,42 +1311,32 @@ export default function DashboardPage() {
 
   if (!sessionReady || (isAuthenticated && fetching)) {
     return (
-      <main className="min-h-screen">
-        <LoadingOverlay
-          open
-          mode="SELF"
-          theme="timing"
-          icon="sparkles"
-          title="당신의 MBTI 사주 공간을 준비하고 있어요."
-          description="타고난 사주와 읽어 둔 운을 함께 불러오고 있어요."
-          messages={[
-            '오늘 다시 읽을 운의 결을 정리하고 있어요.',
-            '내 정보와 복 상태를 함께 맞추고 있어요.',
-            '타고난 성향 위에 들어온 운을 펼치고 있어요.'
-          ]}
-        />
-      </main>
+      <PageLoadingState
+        title="당신의 MBTI 사주 공간을 준비하고 있어요."
+        description="타고난 사주와 읽어 둔 운, 복 상태를 함께 불러오고 있어요."
+        pageClassName="max-w-4xl"
+      />
     );
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-5 px-4 py-6 sm:gap-6 sm:px-6 sm:py-10">
-      <header className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+    <main className="theme-spring-shell theme-spring-shell--medium mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-4 px-3 py-5 sm:gap-6 sm:px-6 sm:py-10">
+      <header className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
         <div>
-          <div className="space-y-2">
+          <div className="space-y-1.5 sm:space-y-2">
             <ThemedBrandLogo
-              className="h-9 w-auto max-w-[180px] sm:h-10 sm:max-w-[220px]"
+              className="h-8 w-auto max-w-[156px] sm:h-10 sm:max-w-[220px]"
               width={220}
               height={66}
               priority
             />
-            <div className="theme-divider max-w-56" />
+            <div className="theme-divider max-w-44 sm:max-w-56" />
           </div>
-          <p className="mt-2 text-sm text-muted-foreground">
-            타고난 사주와 지금의 운을 MBTI와 함께 읽습니다.
+          <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground sm:mt-2 sm:text-sm">
+            내 타고난 기질과 지금 시기 흐름을 MBTI와 함께 봅니다.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:w-auto sm:justify-start">
           {sessionUser?.role === 'ADMIN' ? (
             <Button asChild variant="outline" size="sm" className="gap-1.5">
               <Link href="/admin">
@@ -1246,7 +1368,7 @@ export default function DashboardPage() {
           asChild
           variant="outline"
           size="icon"
-          className="absolute top-4 right-4"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4"
           aria-label="내 정보 수정"
         >
           <Link href="/onboarding">
@@ -1256,9 +1378,9 @@ export default function DashboardPage() {
         <CardHeader>
           <CardTitle>내 정보</CardTitle>
         </CardHeader>
-        <CardContent className="pt-2">
+        <CardContent className="pt-1 sm:pt-2">
           {infoValues.length > 0 ? (
-            <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-2 text-sm">
+            <div className="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap pb-1 text-xs sm:gap-2 sm:pb-2 sm:text-sm">
               {infoValues.map((value, index) => (
                 <Badge key={`${value}-${index}`} variant="secondary">
                   {value}
@@ -1294,9 +1416,9 @@ export default function DashboardPage() {
             ) : null}
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3.5 sm:space-y-4">
           <div className="grid gap-2">
-            <Label htmlFor="reading-type-self">해석 유형</Label>
+            <Label htmlFor="reading-type-self">무엇을 볼까요?</Label>
             <RadioGroup
               value={readingType}
               onValueChange={(value) =>
@@ -1345,7 +1467,7 @@ export default function DashboardPage() {
           </div>
 
           {selectedScenario ? (
-            <div className="theme-surface rounded-lg border bg-muted/30 px-4 py-3">
+            <div className="theme-surface rounded-lg border bg-muted/30 px-3 py-2.5 sm:px-4 sm:py-3">
               <p className="text-xs text-muted-foreground">이번에 읽을 주제</p>
               <p className="text-sm font-medium">{selectedScenario.label}</p>
               <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
@@ -1355,7 +1477,7 @@ export default function DashboardPage() {
           ) : null}
 
           {readingType === 'SELF' ? (
-            <div className="grid gap-4">
+            <div className="grid gap-3 sm:gap-4">
               <div className="grid gap-2">
                 <div className="flex items-center justify-between gap-2">
                   <Label htmlFor="single-profile-select">해석할 사람</Label>
@@ -1389,7 +1511,7 @@ export default function DashboardPage() {
               </div>
 
               <div className="grid gap-2">
-                <Label>보고 싶은 항목</Label>
+                <Label>궁금한 주제</Label>
                 <div className="grid gap-3">
                   {SELF_SCENARIO_CATEGORIES.map((category) => (
                     <ScenarioCategorySection
@@ -1400,6 +1522,7 @@ export default function DashboardPage() {
                         category.code
                       )}
                       creating={creatingReading}
+                      actionLabel={primaryActionLabel}
                       onToggle={(categoryCode) =>
                         toggleScenarioCategory('SELF', categoryCode)
                       }
@@ -1413,7 +1536,7 @@ export default function DashboardPage() {
               </div>
             </div>
           ) : (
-            <div className="grid gap-4">
+            <div className="grid gap-3 sm:gap-4">
               <div className="grid gap-2">
                 <div className="flex items-center justify-between gap-2">
                   <Label htmlFor="compat-first-profile-select">
@@ -1483,7 +1606,7 @@ export default function DashboardPage() {
               </div>
 
               <div className="grid gap-2">
-                <Label>궁합 항목</Label>
+                <Label>어떤 관계가 궁금한가요?</Label>
                 <div className="grid gap-3">
                   {COMPATIBILITY_SCENARIO_CATEGORIES.map((category) => (
                     <ScenarioCategorySection
@@ -1494,6 +1617,7 @@ export default function DashboardPage() {
                         category.code
                       )}
                       creating={creatingReading}
+                      actionLabel={primaryActionLabel}
                       onToggle={(categoryCode) =>
                         toggleScenarioCategory('COMPATIBILITY', categoryCode)
                       }
@@ -1568,18 +1692,18 @@ export default function DashboardPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>최근 본 해석</CardTitle>
+          <CardTitle>최근 본 풀이</CardTitle>
         </CardHeader>
         <CardContent>
           {readings.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              아직 읽어 본 해석이 없어요. 첫 번째 운부터 읽어보세요.
+              아직 읽어 본 풀이가 없어요. 첫 번째 풀이부터 시작해 보세요.
             </p>
           ) : (
             <ul className="space-y-2">
-              {readings.map((reading) => (
+              {visibleReadings.map((reading) => (
                 <li key={reading.id}>
-                  <div className="flex items-start gap-2 rounded-md border px-3 py-3">
+                  <div className="flex items-start gap-2 rounded-md border px-3 py-2.5 sm:py-3">
                     <Link
                       href={`/saju/readings/${reading.id}`}
                       className="min-w-0 flex-1 text-left"
@@ -1597,18 +1721,18 @@ export default function DashboardPage() {
                             ? ` · ${reading.targetLabel}`
                             : ''}
                         </p>
-                        <p className="mt-1 text-[11px] text-muted-foreground">
+                        <p className="mt-1 text-[10px] text-muted-foreground sm:text-[11px]">
                           {getReadingCardHint(
                             reading.readingType,
                             reading.subjectType
                           )}
                         </p>
-                        <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-                          {reading.summary ??
-                            getScenarioFallbackSummary(
-                              reading.readingType,
-                              reading.subjectType
-                            )}
+                        <p className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-muted-foreground sm:text-xs">
+                          {getReadingSummaryPreview(
+                            reading.readingType,
+                            reading.subjectType,
+                            reading.summary
+                          )}
                         </p>
                       </div>
                     </Link>
@@ -1616,6 +1740,7 @@ export default function DashboardPage() {
                       type="button"
                       variant="outline"
                       size="icon"
+                      className="self-start"
                       aria-label="해석 삭제"
                       onClick={() => onStartDeleteReading(reading.id)}
                     >
@@ -1626,6 +1751,21 @@ export default function DashboardPage() {
               ))}
             </ul>
           )}
+          {readings.length > 8 ? (
+            <div className="mt-3 flex items-center justify-between gap-2">
+              <p className="text-xs text-muted-foreground">
+                최신 풀이 8개를 먼저 보여주고 있어요.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setShowAllReadings((current) => !current)}
+              >
+                {showAllReadings ? '최근 풀이만 보기' : '이전 풀이 더 보기'}
+              </Button>
+            </div>
+          ) : null}
         </CardContent>
       </Card>
 
@@ -1936,6 +2076,7 @@ export default function DashboardPage() {
         icon={selectedLoadingMeta?.icon ?? 'sparkles'}
         motion={selectedLoadingMeta?.motion}
         illustration={selectedLoadingMeta?.illustration}
+        artwork={selectedLoadingMeta?.artwork}
         variant="folk"
         title={
           selectedLoadingMeta?.title ??

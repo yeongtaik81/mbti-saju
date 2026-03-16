@@ -5,6 +5,70 @@ import type {
   SajuSections
 } from './types';
 
+const SELF_RELATION_SCENARIOS = new Set([
+  'SELF_LOVE_GENERAL',
+  'SELF_LOVE_RECONCILIATION',
+  'SELF_LOVE_CONTACT_RETURN',
+  'SELF_LOVE_CONFESSION_TIMING',
+  'SELF_MARRIAGE_GENERAL',
+  'SELF_RELATIONSHIP_GENERAL',
+  'SELF_RELATIONSHIP_CUT_OFF',
+  'SELF_FAMILY_GENERAL',
+  'SELF_FAMILY_PARENTS'
+]);
+
+const SELF_WORK_MONEY_SCENARIOS = new Set([
+  'SELF_CAREER_GENERAL',
+  'SELF_CAREER_APTITUDE',
+  'SELF_CAREER_JOB_CHANGE',
+  'SELF_WEALTH_GENERAL',
+  'SELF_WEALTH_ACCUMULATION',
+  'SELF_WEALTH_LEAK'
+]);
+
+function isNonBasicSelfScenario(input: SajuGenerationInput): boolean {
+  return (
+    input.readingType === 'SELF' &&
+    Boolean(input.scenarioCode) &&
+    input.scenarioCode !== 'SELF_BASIC'
+  );
+}
+
+const COMPAT_RELATION_SCENARIOS = new Set([
+  'COMPAT_BASIC',
+  'COMPAT_ROMANCE_FLIRTING',
+  'COMPAT_ROMANCE_LOVER',
+  'COMPAT_ROMANCE_MARRIAGE_PARTNER',
+  'COMPAT_ROMANCE_MARRIED',
+  'COMPAT_ROMANCE_EX',
+  'COMPAT_ROMANCE_CRUSH',
+  'COMPAT_ROMANCE_BLIND_DATE',
+  'COMPAT_ROMANCE_FRIEND_TO_LOVER',
+  'COMPAT_ROMANCE_GHOSTED',
+  'COMPAT_ROMANCE_LEFT_ON_READ',
+  'COMPAT_FRIEND_BEST',
+  'COMPAT_FRIEND_CUT_OFF',
+  'COMPAT_FRIEND_TRAVEL',
+  'COMPAT_FRIEND_ROOMMATE',
+  'COMPAT_FAMILY_MOTHER_DAUGHTER',
+  'COMPAT_FAMILY_PARENT_CHILD',
+  'COMPAT_FAMILY_MOTHER_IN_LAW'
+]);
+
+const COMPAT_WORK_SCENARIOS = new Set([
+  'COMPAT_WORK_COWORKER',
+  'COMPAT_WORK_BOSS',
+  'COMPAT_WORK_DIFFICULT_BOSS',
+  'COMPAT_WORK_BUSINESS_PARTNER',
+  'COMPAT_WORK_WORK_DUMPER'
+]);
+
+const COMPAT_SIGNAL_SCENARIOS = new Set([
+  ...COMPAT_RELATION_SCENARIOS,
+  ...COMPAT_WORK_SCENARIOS,
+  'COMPAT_MISC_IDOL'
+]);
+
 function normalizeText(value: string): string {
   return value.replace(/\s+/g, ' ').trim();
 }
@@ -64,6 +128,47 @@ function ensureMbtiLead(
   }
 
   return `${lead} ${resolved}`.trim();
+}
+
+function shouldAvoidMbtiForwardOpening(input: SajuGenerationInput): boolean {
+  if (isNonBasicSelfScenario(input)) {
+    return true;
+  }
+
+  return input.readingType === 'COMPATIBILITY' && Boolean(input.scenarioCode);
+}
+
+function hasTooSimilarOpening(
+  first: string | undefined,
+  second: string | undefined
+): boolean {
+  const firstLead = extractLeadSentence(first);
+  const secondLead = extractLeadSentence(second);
+
+  if (!firstLead || !secondLead) {
+    return false;
+  }
+
+  const normalizedFirst = normalizeText(firstLead);
+  const normalizedSecond = normalizeText(secondLead);
+  if (!normalizedFirst || !normalizedSecond) {
+    return false;
+  }
+
+  const sharedPrefixLength = Math.min(
+    20,
+    normalizedFirst.length,
+    normalizedSecond.length
+  );
+  if (sharedPrefixLength < 12) {
+    return false;
+  }
+
+  return (
+    normalizedFirst === normalizedSecond ||
+    normalizedFirst.slice(0, sharedPrefixLength) ===
+      normalizedSecond.slice(0, sharedPrefixLength)
+  );
 }
 
 export function isLlmCandidate(value: unknown): value is LlmCandidate {
@@ -212,6 +317,7 @@ export function validateGeneratedCandidate(
 ): string[] {
   const issues: string[] = [];
   const sections = candidate.sectionsJson;
+  const avoidMbtiForwardOpening = shouldAvoidMbtiForwardOpening(input);
 
   if (!sections.sajuBasis) {
     issues.push('사주 근거 섹션이 비어 있습니다.');
@@ -241,6 +347,70 @@ export function validateGeneratedCandidate(
     issues.push('주제별 해석 렌즈가 비어 있습니다.');
   }
 
+  if (input.readingType === 'SELF') {
+    if (!sections.narrativeFlow || sections.narrativeFlow.trim().length < 110) {
+      issues.push('주제별 풀이 본문이 충분히 깊지 않습니다.');
+    }
+
+    if (!sections.subjectLens || sections.subjectLens.trim().length < 90) {
+      issues.push('주제별 판단 렌즈가 충분히 구체적이지 않습니다.');
+    }
+
+    if (
+      !sections.reflectionQuestion ||
+      sections.reflectionQuestion.length < 20
+    ) {
+      issues.push('되짚어 볼 질문이 충분하지 않습니다.');
+    }
+
+    if (!sections.sajuEvidence || sections.sajuEvidence.length < 4) {
+      issues.push('주제별 사주 근거가 충분하지 않습니다.');
+    }
+
+    if (
+      input.scenarioCode &&
+      SELF_RELATION_SCENARIOS.has(input.scenarioCode) &&
+      (!sections.relationshipFlow ||
+        sections.relationshipFlow.trim().length < 110)
+    ) {
+      issues.push('관계 고민 전용 흐름 풀이가 충분하지 않습니다.');
+    }
+
+    if (
+      input.scenarioCode &&
+      SELF_WORK_MONEY_SCENARIOS.has(input.scenarioCode) &&
+      (!sections.wealthFlow || sections.wealthFlow.trim().length < 110)
+    ) {
+      issues.push('일/돈 고민 전용 흐름 풀이가 충분하지 않습니다.');
+    }
+  }
+
+  if (avoidMbtiForwardOpening) {
+    if (hasMbtiForwardOpening(candidate.summary)) {
+      issues.push('요약이 아직 MBTI 소개 문장으로 먼저 열립니다.');
+    }
+
+    if (hasMbtiForwardOpening(sections.overview)) {
+      issues.push('먼저 읽을 결론이 아직 MBTI 소개 문장으로 먼저 열립니다.');
+    }
+
+    if (hasTooSimilarOpening(candidate.summary, sections.overview)) {
+      issues.push('요약과 먼저 읽을 결론의 시작 문장이 너무 비슷합니다.');
+    }
+
+    if (hasMbtiForwardOpening(sections.narrativeFlow)) {
+      issues.push('풀이 본문이 아직 MBTI 소개 문장으로 먼저 열립니다.');
+    }
+
+    if (hasMbtiForwardOpening(sections.timingHint)) {
+      issues.push('타이밍 섹션이 아직 MBTI 소개 문장으로 먼저 열립니다.');
+    }
+
+    if (hasMbtiForwardOpening(sections.caution)) {
+      issues.push('주의 섹션이 아직 MBTI 소개 문장으로 먼저 열립니다.');
+    }
+  }
+
   if (input.readingType === 'COMPATIBILITY') {
     if (
       !sections.pairDynamic ||
@@ -248,6 +418,75 @@ export function validateGeneratedCandidate(
       !sections.communicationTip
     ) {
       issues.push('궁합 전용 섹션이 충분하지 않습니다.');
+    }
+
+    if (!sections.narrativeFlow || sections.narrativeFlow.trim().length < 110) {
+      issues.push('궁합 풀이 본문이 충분히 깊지 않습니다.');
+    }
+
+    if (!sections.subjectLens || sections.subjectLens.trim().length < 90) {
+      issues.push('궁합 판단 렌즈가 충분히 구체적이지 않습니다.');
+    }
+
+    if (
+      !sections.reflectionQuestion ||
+      sections.reflectionQuestion.length < 20
+    ) {
+      issues.push('궁합 되짚기 질문이 충분하지 않습니다.');
+    }
+
+    if (!sections.sajuEvidence || sections.sajuEvidence.length < 4) {
+      issues.push('궁합 사주 근거가 충분하지 않습니다.');
+    }
+
+    if (
+      input.scenarioCode &&
+      COMPAT_SIGNAL_SCENARIOS.has(input.scenarioCode) &&
+      (!sections.pairDynamic || sections.pairDynamic.trim().length < 80)
+    ) {
+      issues.push('궁합의 핵심 흐름 설명이 충분하지 않습니다.');
+    }
+
+    if (
+      input.scenarioCode &&
+      COMPAT_SIGNAL_SCENARIOS.has(input.scenarioCode) &&
+      (!sections.communicationTip ||
+        sections.communicationTip.trim().length < 80)
+    ) {
+      issues.push('궁합 대화 가이드가 충분히 구체적이지 않습니다.');
+    }
+
+    if (
+      input.scenarioCode &&
+      COMPAT_SIGNAL_SCENARIOS.has(input.scenarioCode) &&
+      (!sections.attractionPoint || sections.attractionPoint.trim().length < 70)
+    ) {
+      issues.push('궁합의 끌림 포인트 설명이 충분하지 않습니다.');
+    }
+
+    if (
+      input.scenarioCode &&
+      COMPAT_RELATION_SCENARIOS.has(input.scenarioCode) &&
+      (!sections.relationshipFlow ||
+        sections.relationshipFlow.trim().length < 110)
+    ) {
+      issues.push('관계 궁합 전용 흐름 풀이가 충분하지 않습니다.');
+    }
+
+    if (
+      input.scenarioCode &&
+      COMPAT_RELATION_SCENARIOS.has(input.scenarioCode) &&
+      (!sections.conflictTrigger || sections.conflictTrigger.trim().length < 80)
+    ) {
+      issues.push('관계 궁합의 충돌 포인트 설명이 충분하지 않습니다.');
+    }
+
+    if (
+      input.scenarioCode &&
+      COMPAT_WORK_SCENARIOS.has(input.scenarioCode) &&
+      (!sections.wealthFlow || sections.wealthFlow.trim().length < 110)
+    ) {
+      issues.push('업무 궁합 전용 흐름 풀이가 충분하지 않습니다.');
     }
   }
 
@@ -327,14 +566,58 @@ function normalizeSajuEvidence(
 }
 
 export function finalizeContent(
+  input: SajuGenerationInput,
   candidate: LlmCandidate,
   draft: LlmCandidate
 ): LlmCandidate {
+  const mergeOpening = (
+    section:
+      | 'summary'
+      | 'overview'
+      | 'narrativeFlow'
+      | 'wealthFlow'
+      | 'relationshipFlow'
+      | 'timingHint'
+      | 'caution',
+    candidateText: string | null | undefined,
+    draftText: string | null | undefined
+  ): string | undefined => {
+    if (shouldAvoidMbtiForwardOpening(input)) {
+      const resolved = pickText(candidateText, draftText);
+      if (!resolved) {
+        return undefined;
+      }
+
+      const shouldRejectMbtiOpening =
+        section === 'summary' ||
+        section === 'overview' ||
+        section === 'narrativeFlow' ||
+        section === 'timingHint' ||
+        section === 'caution' ||
+        (isNonBasicSelfScenario(input) &&
+          (section === 'wealthFlow' || section === 'relationshipFlow'));
+
+      if (
+        shouldRejectMbtiOpening &&
+        hasMbtiForwardOpening(resolved) &&
+        draftText &&
+        !hasMbtiForwardOpening(draftText)
+      ) {
+        return draftText;
+      }
+
+      return resolved;
+    }
+
+    return ensureMbtiLead(candidateText, draftText);
+  };
+
   const sectionsJson: SajuSections = {
     ...draft.sectionsJson,
     ...candidate.sectionsJson,
     overview:
-      ensureMbtiLead(
+      mergeOpening(
+        'overview',
         candidate.sectionsJson.overview,
         draft.sectionsJson.overview
       ) ?? draft.sectionsJson.overview,
@@ -344,7 +627,8 @@ export function finalizeContent(
         draft.sectionsJson.coreSignal
       ) ?? draft.sectionsJson.coreSignal,
     caution:
-      ensureMbtiLead(
+      mergeOpening(
+        'caution',
         candidate.sectionsJson.caution,
         draft.sectionsJson.caution
       ) ?? draft.sectionsJson.caution,
@@ -369,7 +653,8 @@ export function finalizeContent(
       candidate.sectionsJson.subjectLens,
       draft.sectionsJson.subjectLens
     ),
-    narrativeFlow: ensureMbtiLead(
+    narrativeFlow: mergeOpening(
+      'narrativeFlow',
       candidate.sectionsJson.narrativeFlow,
       draft.sectionsJson.narrativeFlow
     ),
@@ -385,11 +670,13 @@ export function finalizeContent(
       candidate.sectionsJson.yearlyFlow,
       draft.sectionsJson.yearlyFlow
     ),
-    wealthFlow: ensureMbtiLead(
+    wealthFlow: mergeOpening(
+      'wealthFlow',
       candidate.sectionsJson.wealthFlow,
       draft.sectionsJson.wealthFlow
     ),
-    relationshipFlow: ensureMbtiLead(
+    relationshipFlow: mergeOpening(
+      'relationshipFlow',
       candidate.sectionsJson.relationshipFlow,
       draft.sectionsJson.relationshipFlow
     ),
@@ -417,7 +704,8 @@ export function finalizeContent(
       candidate.sectionsJson.careerMoneyLens,
       draft.sectionsJson.careerMoneyLens
     ),
-    timingHint: ensureMbtiLead(
+    timingHint: mergeOpening(
+      'timingHint',
       candidate.sectionsJson.timingHint,
       draft.sectionsJson.timingHint
     ),
@@ -428,7 +716,9 @@ export function finalizeContent(
   };
 
   return {
-    summary: ensureMbtiLead(candidate.summary, draft.summary) ?? draft.summary,
+    summary:
+      mergeOpening('summary', candidate.summary, draft.summary) ??
+      draft.summary,
     sectionsJson
   };
 }

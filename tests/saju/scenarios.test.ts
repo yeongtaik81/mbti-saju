@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  getDefaultScenarioCode,
   getScenarioCategories,
   getScenarioFallbackSummary,
   getScenarioLoadingMeta,
@@ -15,6 +16,15 @@ describe('scenario registry', () => {
 
     expect(loveCategory?.description).toContain('다시 이어질 여지');
     expect(loveCategory?.options.length).toBeGreaterThan(0);
+  });
+
+  it('puts basic compatibility first with a neutral default entry', () => {
+    const categories = getScenarioCategories('COMPATIBILITY');
+
+    expect(getDefaultScenarioCode('COMPATIBILITY')).toBe('COMPAT_BASIC');
+    expect(categories[0]?.code).toBe('COMPAT_OVERVIEW');
+    expect(categories[0]?.options[0]?.code).toBe('COMPAT_BASIC');
+    expect(categories[1]?.code).toBe('COMPAT_ROMANCE');
   });
 
   it('returns a custom loading meta for left-on-read readings', () => {
