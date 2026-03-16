@@ -1,0 +1,17 @@
+{
+  "name": "@trading/shared",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./types": "./dist/types/index.js",
+    "./constants": "./dist/constants/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "echo 'no tests yet'"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

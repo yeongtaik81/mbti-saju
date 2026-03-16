@@ -1,0 +1,9 @@
+{
+  "name": "algorithmic-trading",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "db:init": "pnpm --filter @trading/engine db:init"
+  }
+}
