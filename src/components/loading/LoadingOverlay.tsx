@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { SajuLoadingVisual } from '@/components/loading/SajuLoadingVisual';
 import { cn } from '@/lib/utils';
 import type {
+  ScenarioLoadingArtwork,
   ScenarioLoadingIllustration,
   ReadingMode,
   ScenarioLoadingIcon,
@@ -62,6 +63,7 @@ type Props = {
   icon: ScenarioLoadingIcon;
   motion?: ScenarioLoadingMotion;
   illustration?: ScenarioLoadingIllustration;
+  artwork?: ScenarioLoadingArtwork;
   variant?: 'simple' | 'folk';
   title: string;
   messages: string[];
@@ -76,6 +78,7 @@ export function LoadingOverlay({
   icon,
   motion,
   illustration,
+  artwork,
   variant = 'simple',
   title,
   messages,
@@ -107,61 +110,73 @@ export function LoadingOverlay({
   }
 
   const activeMessage = normalizedMessages[messageIndex] ?? '';
+  const isSpring = resolvedTheme === 'spring';
   const isSpringFolk = resolvedTheme === 'spring' && variant === 'folk';
   const springFolkMessage = isSpringFolk
     ? getSpringFolkMessage(theme, mode)
     : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 px-4 py-6 backdrop-blur-sm sm:px-6 sm:py-10">
-      <Card
+    <div className="theme-loading-overlay fixed inset-0 z-50 flex items-center justify-center bg-background/80 px-4 py-6 backdrop-blur-sm sm:px-6 sm:py-10">
+      <div
         className={cn(
-          'w-full border-border/70 bg-card/90 shadow-2xl backdrop-blur-md',
-          variant === 'folk' ? 'max-w-2xl overflow-hidden' : 'max-w-lg'
+          'flex w-full justify-center',
+          isSpring && 'theme-spring-shell theme-spring-shell--strong'
         )}
       >
-        <CardContent
+        <Card
           className={cn(
-            'flex flex-col items-center gap-5 text-center',
-            variant === 'folk'
-              ? 'px-4 py-5 sm:px-6 sm:py-6'
-              : 'px-4 py-6 sm:px-8 sm:py-8'
+            'theme-loading-card w-full border-border/70 bg-card/90 shadow-2xl backdrop-blur-md',
+            variant === 'folk' ? 'max-w-2xl overflow-hidden' : 'max-w-lg',
+            isSpring && 'relative'
           )}
         >
-          {badgeLabel ? <Badge variant="secondary">{badgeLabel}</Badge> : null}
-
-          <SajuLoadingVisual
-            theme={theme}
-            icon={icon}
-            mode={mode}
-            motion={motion}
-            illustration={illustration}
-            variant={variant}
-          />
-
-          <div className="space-y-2">
-            <p className="text-lg font-semibold leading-tight">{title}</p>
-            {description ? (
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {description}
-              </p>
-            ) : null}
-            {springFolkMessage ? (
-              <p className="text-xs leading-relaxed text-muted-foreground/90">
-                {springFolkMessage}
-              </p>
-            ) : null}
-          </div>
-
-          <div
-            key={`${messageIndex}-${activeMessage}`}
-            aria-live="polite"
-            className="min-h-[3rem] max-w-md animate-rise-in text-sm leading-relaxed text-muted-foreground"
+          <CardContent
+            className={cn(
+              'flex flex-col items-center gap-5 text-center',
+              variant === 'folk'
+                ? 'px-4 py-5 sm:px-6 sm:py-6'
+                : 'px-4 py-6 sm:px-8 sm:py-8'
+            )}
           >
-            {activeMessage}
-          </div>
-        </CardContent>
-      </Card>
+            {badgeLabel ? (
+              <Badge variant="secondary">{badgeLabel}</Badge>
+            ) : null}
+
+            <SajuLoadingVisual
+              theme={theme}
+              icon={icon}
+              mode={mode}
+              motion={motion}
+              illustration={illustration}
+              artwork={artwork}
+              variant={variant}
+            />
+
+            <div className="theme-loading-copy space-y-2">
+              <p className="text-lg font-semibold leading-tight">{title}</p>
+              {description ? (
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {description}
+                </p>
+              ) : null}
+              {springFolkMessage ? (
+                <p className="text-xs leading-relaxed text-muted-foreground/90">
+                  {springFolkMessage}
+                </p>
+              ) : null}
+            </div>
+
+            <div
+              key={`${messageIndex}-${activeMessage}`}
+              aria-live="polite"
+              className="theme-loading-message min-h-[3rem] max-w-md animate-rise-in text-sm leading-relaxed text-muted-foreground"
+            >
+              {activeMessage}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

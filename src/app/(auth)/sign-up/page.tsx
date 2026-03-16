@@ -141,8 +141,8 @@ export default function SignUpPage() {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-md items-center px-4 py-6 sm:px-6 sm:py-10">
-      <Card className="w-full">
+    <main className="theme-spring-shell theme-spring-shell--strong mx-auto flex min-h-screen w-full max-w-md items-center px-4 py-6 sm:px-6 sm:py-10">
+      <Card className="theme-card-ornament theme-surface w-full overflow-hidden">
         <CardHeader>
           <CardTitle>MBTI 사주 시작하기</CardTitle>
           <CardDescription>

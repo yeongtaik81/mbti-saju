@@ -197,7 +197,7 @@ export default function BokPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-5 px-4 py-6 sm:gap-6 sm:px-6 sm:py-10">
+    <main className="theme-spring-shell theme-spring-shell--subtle mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-5 px-4 py-6 sm:gap-6 sm:px-6 sm:py-10">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-3">
           <ThemedBrandLogo

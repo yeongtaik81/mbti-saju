@@ -20,7 +20,7 @@ export default function MbtiPage() {
   }, []);
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-4 px-4 py-6 sm:px-6 sm:py-10">
+    <main className="theme-spring-shell theme-spring-shell--strong mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-4 px-4 py-6 sm:px-6 sm:py-10">
       <section className="theme-card-ornament theme-surface rounded-3xl border bg-card/80 px-4 py-4 shadow-sm sm:px-6 sm:py-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-3">

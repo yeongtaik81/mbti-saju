@@ -51,6 +51,61 @@ describe('saju generator regression snapshots', () => {
     expect(pickRegressionView(draft)).toMatchSnapshot();
   });
 
+  it('keeps the focused reconciliation narrative stable', () => {
+    const draft = buildRuleBasedDraft(
+      createSelfGenerationInput('ROMANCE', 'INFJ', 'SELF_LOVE_RECONCILIATION'),
+      'rule-only'
+    );
+
+    expect(pickRegressionView(draft)).toMatchSnapshot();
+  });
+
+  it('keeps the focused job change narrative stable', () => {
+    const draft = buildRuleBasedDraft(
+      createSelfGenerationInput('CAREER', 'INFJ', 'SELF_CAREER_JOB_CHANGE'),
+      'rule-only'
+    );
+
+    expect(pickRegressionView(draft)).toMatchSnapshot();
+  });
+
+  it('keeps the focused wealth leak narrative stable', () => {
+    const draft = buildRuleBasedDraft(
+      createSelfGenerationInput('WEALTH', 'INFJ', 'SELF_WEALTH_LEAK'),
+      'rule-only'
+    );
+
+    expect(pickRegressionView(draft)).toMatchSnapshot();
+  });
+
+  it('keeps the focused left-on-read compatibility narrative stable', () => {
+    const draft = buildRuleBasedDraft(
+      createCompatibilityGenerationInput(
+        'CRUSH',
+        'INFJ',
+        'ENTP',
+        'COMPAT_ROMANCE_LEFT_ON_READ'
+      ),
+      'rule-only'
+    );
+
+    expect(pickRegressionView(draft)).toMatchSnapshot();
+  });
+
+  it('keeps the focused business partner compatibility narrative stable', () => {
+    const draft = buildRuleBasedDraft(
+      createCompatibilityGenerationInput(
+        'BUSINESS_PARTNER',
+        'INTJ',
+        'ENTJ',
+        'COMPAT_WORK_BUSINESS_PARTNER'
+      ),
+      'rule-only'
+    );
+
+    expect(pickRegressionView(draft)).toMatchSnapshot();
+  });
+
   it('keeps the lover compatibility narrative stable', () => {
     const draft = buildRuleBasedDraft(
       createCompatibilityGenerationInput('LOVER'),

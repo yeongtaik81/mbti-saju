@@ -28,7 +28,7 @@ export type CompatibilityRelationType =
   (typeof COMPATIBILITY_RELATION_TYPES)[number];
 
 export const SELF_SUBJECT_LABEL: Record<SelfSubjectType, string> = {
-  BASIC: '기본',
+  BASIC: '기본 해석',
   LIFETIME_FLOW: '평생 총운',
   ROMANCE: '연애운',
   MARRIAGE: '결혼운/배우자운',
@@ -36,16 +36,16 @@ export const SELF_SUBJECT_LABEL: Record<SelfSubjectType, string> = {
   WEALTH: '재물운',
   RELATIONSHIPS: '인간관계운',
   FAMILY: '가족운',
-  YEAR_MONTH_DAY_FORTUNE: '올해운/월운/오늘운',
-  DAEUN: '대운해석',
-  LUCK_UP: '개운법'
+  YEAR_MONTH_DAY_FORTUNE: '지금 시기 운',
+  DAEUN: '현재 대운',
+  LUCK_UP: '개운법(운을 살리는 생활 루틴)'
 };
 
 export const COMPATIBILITY_RELATION_LABEL: Record<
   CompatibilityRelationType,
   string
 > = {
-  BASIC: '기본',
+  BASIC: '기본 궁합',
   LOVER: '연인',
   MARRIED: '부부',
   CRUSH: '썸/짝사랑',

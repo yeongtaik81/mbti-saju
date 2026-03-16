@@ -61,7 +61,7 @@ export async function generateSajuContent(
     });
   }
 
-  let content = finalizeContent(draft, draft);
+  let content = finalizeContent(input, draft, draft);
   let llmRendered = false;
   let llmReviewed = false;
   let lastRenderIssues: string[] = [];
@@ -95,7 +95,7 @@ export async function generateSajuContent(
           continue;
         }
 
-        const candidate = finalizeContent(llmResult.candidate, draft);
+        const candidate = finalizeContent(input, llmResult.candidate, draft);
         const candidateIssues = validateGeneratedCandidate(input, candidate);
         if (candidateIssues.length > 0) {
           lastRenderIssues = candidateIssues;

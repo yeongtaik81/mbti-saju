@@ -91,8 +91,8 @@ export default function HomePage() {
 
   if (checkingSession) {
     return (
-      <main className="mx-auto flex min-h-screen w-full max-w-xl items-center px-4 py-6 sm:px-6 sm:py-10">
-        <Card className="w-full">
+      <main className="theme-spring-shell theme-spring-shell--strong mx-auto flex min-h-screen w-full max-w-xl items-center px-4 py-6 sm:px-6 sm:py-10">
+        <Card className="theme-card-ornament theme-surface w-full max-w-md overflow-hidden">
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">
               MBTI 사주로 들어가는 길을 열고 있어요.
@@ -104,7 +104,7 @@ export default function HomePage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-xl flex-col items-center justify-center gap-4 px-4 py-6 sm:px-6 sm:py-10">
+    <main className="theme-spring-shell theme-spring-shell--strong mx-auto flex min-h-screen w-full max-w-xl flex-col items-center justify-center gap-4 px-4 py-6 sm:px-6 sm:py-10">
       <Card className="theme-surface mx-auto w-full max-w-md overflow-hidden">
         <CardHeader className="theme-card-ornament">
           <div className="space-y-3">

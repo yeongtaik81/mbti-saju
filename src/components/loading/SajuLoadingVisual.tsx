@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import type { LucideIcon } from 'lucide-react';
 import {
   Banknote,
@@ -19,6 +20,7 @@ import {
 import { useTheme } from 'next-themes';
 import type {
   ReadingMode,
+  ScenarioLoadingArtwork,
   ScenarioLoadingIllustration,
   ScenarioLoadingIcon,
   ScenarioLoadingMotion,
@@ -110,12 +112,84 @@ type Props = {
   mode: ReadingMode;
   motion?: ScenarioLoadingMotion;
   illustration?: ScenarioLoadingIllustration;
+  artwork?: ScenarioLoadingArtwork;
   variant?: VisualVariant;
 };
 
 type FolkSceneKind = 'swing' | 'couple' | 'scholar' | 'family';
 type UiThemeKind = 'default' | 'spring';
 type RomanceIllustrationKind = ScenarioLoadingIllustration;
+
+const ARTWORK_MAP: Record<
+  ScenarioLoadingArtwork,
+  {
+    src: string;
+    alt: string;
+  }
+> = {
+  'self-basic': {
+    src: '/loading/self-basic-reading.png',
+    alt: ''
+  },
+  'self-lifetime-flow': {
+    src: '/loading/self-lifetime-flow.png',
+    alt: ''
+  }
+};
+
+function ArtworkScene({
+  artwork,
+  uiTheme,
+  variant
+}: {
+  artwork: ScenarioLoadingArtwork;
+  uiTheme: UiThemeKind;
+  variant: VisualVariant;
+}) {
+  const asset = ARTWORK_MAP[artwork];
+  const isSpring = uiTheme === 'spring';
+
+  return (
+    <div
+      className={cn(
+        'relative overflow-hidden rounded-[1.75rem] border shadow-[0_20px_48px_rgba(69,46,31,0.14)]',
+        variant === 'folk' ? 'w-full max-w-sm' : 'w-full max-w-[15rem]',
+        isSpring
+          ? 'border-rose-200/80 bg-rose-50/90'
+          : 'border-stone-300/80 bg-stone-50/95'
+      )}
+      aria-hidden="true"
+    >
+      <div
+        className={cn(
+          'pointer-events-none absolute inset-0 z-10',
+          isSpring
+            ? 'bg-[radial-gradient(circle_at_top,rgba(255,237,241,0.24),transparent_32%),linear-gradient(180deg,rgba(255,250,250,0.08),rgba(145,84,74,0.08))]'
+            : 'bg-[radial-gradient(circle_at_top,rgba(255,250,241,0.18),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.02),rgba(82,58,41,0.12))]'
+        )}
+      />
+      <div
+        className={cn(
+          'pointer-events-none absolute inset-x-0 bottom-0 z-10 h-24',
+          isSpring
+            ? 'bg-gradient-to-t from-rose-50/90 via-rose-50/20 to-transparent'
+            : 'bg-gradient-to-t from-stone-50/90 via-stone-50/10 to-transparent'
+        )}
+      />
+      <div className="relative aspect-[2/3] w-full">
+        <Image
+          src={asset.src}
+          alt={asset.alt}
+          fill
+          sizes={
+            variant === 'folk' ? '(max-width: 640px) 72vw, 360px' : '240px'
+          }
+          className="object-cover"
+        />
+      </div>
+    </div>
+  );
+}
 
 function getFolkSceneKind(
   theme: ScenarioLoadingTheme,
@@ -1608,11 +1682,18 @@ export function SajuLoadingVisual({
   mode,
   motion = 'gentle',
   illustration,
+  artwork,
   variant = 'simple'
 }: Props) {
   const { resolvedTheme } = useTheme();
   const uiTheme: UiThemeKind =
     resolvedTheme === 'spring' ? 'spring' : 'default';
+
+  if (artwork) {
+    return (
+      <ArtworkScene artwork={artwork} uiTheme={uiTheme} variant={variant} />
+    );
+  }
 
   if (variant === 'folk') {
     if (illustration?.startsWith('romance-')) {

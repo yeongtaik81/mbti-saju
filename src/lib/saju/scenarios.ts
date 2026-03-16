@@ -13,6 +13,7 @@ export type ScenarioCategoryCode =
   | 'SELF_CAREER'
   | 'SELF_WEALTH'
   | 'SELF_RELATIONSHIP'
+  | 'COMPAT_OVERVIEW'
   | 'COMPAT_ROMANCE'
   | 'COMPAT_FRIEND'
   | 'COMPAT_WORK'
@@ -41,7 +42,11 @@ export type ScenarioCode =
   | 'SELF_RELATIONSHIP_CUT_OFF'
   | 'SELF_FAMILY_GENERAL'
   | 'SELF_FAMILY_PARENTS'
+  | 'COMPAT_BASIC'
   | 'COMPAT_ROMANCE_FLIRTING'
+  | 'COMPAT_ROMANCE_LOVER'
+  | 'COMPAT_ROMANCE_MARRIAGE_PARTNER'
+  | 'COMPAT_ROMANCE_MARRIED'
   | 'COMPAT_ROMANCE_EX'
   | 'COMPAT_ROMANCE_CRUSH'
   | 'COMPAT_ROMANCE_BLIND_DATE'
@@ -114,11 +119,14 @@ export type ScenarioLoadingIllustration =
   | 'romance-ghosted'
   | 'romance-left-on-read';
 
+export type ScenarioLoadingArtwork = 'self-basic' | 'self-lifetime-flow';
+
 export type ScenarioLoadingMeta = {
   theme: ScenarioLoadingTheme;
   icon: ScenarioLoadingIcon;
   motion: ScenarioLoadingMotion;
   illustration?: ScenarioLoadingIllustration;
+  artwork?: ScenarioLoadingArtwork;
   title: string;
   messages: string[];
 };
@@ -129,7 +137,8 @@ const SCENARIO_CATEGORY_DESCRIPTION: Record<ScenarioCategoryCode, string> = {
   SELF_CAREER: '일이 붙는 자리와 움직일 때를 봅니다.',
   SELF_WEALTH: '돈이 붙는 길과 새는 틈을 봅니다.',
   SELF_RELATIONSHIP: '덜 지치고 오래 가는 거리를 봅니다.',
-  COMPAT_ROMANCE: '끌림의 온도와 이어지는 속도를 봅니다.',
+  COMPAT_OVERVIEW: '두 사람 전체 흐름과 잘 맞는 점, 조심할 점을 먼저 봅니다.',
+  COMPAT_ROMANCE: '끌림부터 오래 갈 관계의 합까지 봅니다.',
   COMPAT_FRIEND: '편안함과 거리감의 균형을 봅니다.',
   COMPAT_WORK: '함께 일할 때 맞는 기준과 어긋나는 지점을 봅니다.',
   COMPAT_FAMILY: '가까울수록 생기는 기대와 거리를 봅니다.',
@@ -200,11 +209,23 @@ const SCENARIO_CATEGORY_LOADING_META: Record<
       '관계를 지키는 힘과 쉬어야 할 지점을 함께 가려 보고 있어요.'
     ]
   },
+  COMPAT_OVERVIEW: {
+    theme: 'relationship',
+    icon: 'handshake',
+    motion: 'gentle',
+    title: '두 사람 전체 흐름을 넓게 살피고 있어요.',
+    messages: [
+      '잘 맞는 점과 자주 어긋나는 지점을 함께 보고 있어요.',
+      '감정보다 두 사람의 생활 리듬과 기준 합을 살피고 있어요.',
+      '오래 봐도 편안한 관계인지 차분히 읽고 있어요.',
+      '지금 이 관계에서 먼저 맞춰야 할 선을 함께 가려 보고 있어요.'
+    ]
+  },
   COMPAT_ROMANCE: {
     theme: 'love',
     icon: 'message',
     motion: 'pulse',
-    title: '두 사람의 흐름을 겹쳐 보며 궁합을 풀이하고 있어요.',
+    title: '두 사람의 감정과 관계 리듬을 함께 보고 있어요.',
     messages: [
       '서로 잘 맞는 점과 어긋나는 지점을 살펴보고 있어요.',
       '관계의 온도와 흐름을 차분히 맞춰 보고 있어요.',
@@ -265,6 +286,12 @@ const SCENARIO_CATEGORY_LOADING_META: Record<
 const SCENARIO_LOADING_OVERRIDES: Partial<
   Record<ScenarioCode, Partial<ScenarioLoadingMeta>>
 > = {
+  SELF_BASIC: {
+    artwork: 'self-basic'
+  },
+  SELF_LIFETIME_FLOW: {
+    artwork: 'self-lifetime-flow'
+  },
   SELF_YEARLY_FORTUNE: {
     icon: 'calendar',
     motion: 'drift',
@@ -421,6 +448,33 @@ const SCENARIO_LOADING_OVERRIDES: Partial<
   COMPAT_ROMANCE_FLIRTING: {
     illustration: 'romance-flirting'
   },
+  COMPAT_ROMANCE_LOVER: {
+    title: '지금 연인 사이의 안정감과 회복 리듬을 보고 있어요.',
+    messages: [
+      '좋아하는 마음이 실제 안정감으로 이어지는지 살피고 있어요.',
+      '다툰 뒤에도 관계가 다시 편안해지는 속도를 보고 있어요.',
+      '애정 표현과 기대치가 어디서 잘 맞는지 읽고 있어요.',
+      '지금 관계를 더 단단하게 만드는 기준을 함께 보고 있어요.'
+    ]
+  },
+  COMPAT_ROMANCE_MARRIAGE_PARTNER: {
+    title: '오래 함께 살 상대로 맞는지 차분히 보고 있어요.',
+    messages: [
+      '설렘보다 생활 감각과 책임 기준이 맞는지 살피고 있어요.',
+      '함께 살 때 덜 지치고 더 편안한 리듬을 보고 있어요.',
+      '관계가 오래 갈수록 중요한 기준이 어디서 겹치는지 읽고 있어요.',
+      '결혼을 앞두고 꼭 확인할 합과 거리감을 함께 보고 있어요.'
+    ]
+  },
+  COMPAT_ROMANCE_MARRIED: {
+    title: '부부로 살아가는 리듬과 회복력을 보고 있어요.',
+    messages: [
+      '함께 사는 속도와 역할 기대가 맞는지 살피고 있어요.',
+      '서운함 뒤에도 다시 회복되는 방식을 보고 있어요.',
+      '돈과 시간과 집안 리듬이 어디서 편안한지 읽고 있어요.',
+      '지금 부부 관계를 덜 무겁게 만드는 기준을 함께 보고 있어요.'
+    ]
+  },
   COMPAT_ROMANCE_EX: {
     illustration: 'romance-ex'
   },
@@ -440,7 +494,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'SELF_BASIC',
     mode: 'SELF',
     categoryCode: 'SELF_TIMING',
-    categoryLabel: '기본/시기',
+    categoryLabel: '전체 흐름/시기',
     label: '기본 해석',
     description: '타고난 사주와 지금 들어온 운의 방향을 함께 봅니다.',
     legacySubjectType: 'BASIC'
@@ -449,7 +503,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'SELF_LIFETIME_FLOW',
     mode: 'SELF',
     categoryCode: 'SELF_TIMING',
-    categoryLabel: '기본/시기',
+    categoryLabel: '전체 흐름/시기',
     label: '평생 총운',
     description: '평생에 걸쳐 반복되는 큰 운의 결을 봅니다.',
     legacySubjectType: 'LIFETIME_FLOW'
@@ -458,7 +512,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'SELF_DAEUN',
     mode: 'SELF',
     categoryCode: 'SELF_TIMING',
-    categoryLabel: '기본/시기',
+    categoryLabel: '전체 흐름/시기',
     label: '현재 대운',
     description: '지금 10년 운이 삶의 방향을 어떻게 바꾸는지 봅니다.',
     legacySubjectType: 'DAEUN'
@@ -467,7 +521,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'SELF_YEARLY_FORTUNE',
     mode: 'SELF',
     categoryCode: 'SELF_TIMING',
-    categoryLabel: '기본/시기',
+    categoryLabel: '전체 흐름/시기',
     label: '올해 운',
     description: '올해 들어온 운이 어디를 밝히는지 봅니다.',
     legacySubjectType: 'YEAR_MONTH_DAY_FORTUNE'
@@ -476,7 +530,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'SELF_DAILY_FORTUNE',
     mode: 'SELF',
     categoryCode: 'SELF_TIMING',
-    categoryLabel: '기본/시기',
+    categoryLabel: '전체 흐름/시기',
     label: '오늘 운',
     description: '오늘의 리듬과 힘을 써야 할 때를 봅니다.',
     legacySubjectType: 'YEAR_MONTH_DAY_FORTUNE'
@@ -485,8 +539,8 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'SELF_LUCK_UP',
     mode: 'SELF',
     categoryCode: 'SELF_TIMING',
-    categoryLabel: '기본/시기',
-    label: '개운법',
+    categoryLabel: '전체 흐름/시기',
+    label: '개운법(운을 살리는 생활 루틴)',
     description: '지금 운을 살리는 생활 기준과 태도를 봅니다.',
     legacySubjectType: 'LUCK_UP'
   },
@@ -593,7 +647,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'SELF_RELATIONSHIP_GENERAL',
     mode: 'SELF',
     categoryCode: 'SELF_RELATIONSHIP',
-    categoryLabel: '인간관계/가족',
+    categoryLabel: '사람/가족',
     label: '인간관계운',
     description: '사람과의 거리와 신뢰가 붙는 방식을 봅니다.',
     legacySubjectType: 'RELATIONSHIPS'
@@ -602,7 +656,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'SELF_RELATIONSHIP_CUT_OFF',
     mode: 'SELF',
     categoryCode: 'SELF_RELATIONSHIP',
-    categoryLabel: '인간관계/가족',
+    categoryLabel: '사람/가족',
     label: '손절 타이밍',
     description: '지금은 거리 조절이 필요한지, 정리가 필요한지 봅니다.',
     legacySubjectType: 'RELATIONSHIPS'
@@ -611,7 +665,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'SELF_FAMILY_GENERAL',
     mode: 'SELF',
     categoryCode: 'SELF_RELATIONSHIP',
-    categoryLabel: '인간관계/가족',
+    categoryLabel: '사람/가족',
     label: '가족운',
     description: '가족 안에서 내 역할과 감정의 흐름을 봅니다.',
     legacySubjectType: 'FAMILY'
@@ -620,25 +674,61 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'SELF_FAMILY_PARENTS',
     mode: 'SELF',
     categoryCode: 'SELF_RELATIONSHIP',
-    categoryLabel: '인간관계/가족',
+    categoryLabel: '사람/가족',
     label: '부모와의 관계',
     description: '부모와의 거리감과 말이 닿는 방식을 봅니다.',
     legacySubjectType: 'FAMILY'
   },
   {
+    code: 'COMPAT_BASIC',
+    mode: 'COMPATIBILITY',
+    categoryCode: 'COMPAT_OVERVIEW',
+    categoryLabel: '기본 궁합',
+    label: '기본 궁합',
+    description: '두 사람의 전체 흐름과 잘 맞는 점, 조심할 점을 넓게 봅니다.',
+    legacySubjectType: 'BASIC'
+  },
+  {
     code: 'COMPAT_ROMANCE_FLIRTING',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_ROMANCE',
-    categoryLabel: '연애/썸',
+    categoryLabel: '연애/결혼',
     label: '썸타는 사이',
     description: '감정의 온도와 관계가 붙는 속도를 봅니다.',
     legacySubjectType: 'CRUSH'
   },
   {
+    code: 'COMPAT_ROMANCE_LOVER',
+    mode: 'COMPATIBILITY',
+    categoryCode: 'COMPAT_ROMANCE',
+    categoryLabel: '연애/결혼',
+    label: '연인',
+    description: '지금 관계의 안정감과 갈등 뒤 회복력을 봅니다.',
+    legacySubjectType: 'LOVER'
+  },
+  {
+    code: 'COMPAT_ROMANCE_MARRIAGE_PARTNER',
+    mode: 'COMPATIBILITY',
+    categoryCode: 'COMPAT_ROMANCE',
+    categoryLabel: '연애/결혼',
+    label: '결혼 상대',
+    description: '오래 함께 살 상대로 맞는지와 생활 합을 봅니다.',
+    legacySubjectType: 'MARRIED'
+  },
+  {
+    code: 'COMPAT_ROMANCE_MARRIED',
+    mode: 'COMPATIBILITY',
+    categoryCode: 'COMPAT_ROMANCE',
+    categoryLabel: '연애/결혼',
+    label: '부부',
+    description: '함께 사는 리듬과 기대 역할의 합을 봅니다.',
+    legacySubjectType: 'MARRIED'
+  },
+  {
     code: 'COMPAT_ROMANCE_EX',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_ROMANCE',
-    categoryLabel: '연애/썸',
+    categoryLabel: '연애/결혼',
     label: '전연인',
     description: '헤어진 뒤 남은 감정과 다시 붙는 패턴을 봅니다.',
     legacySubjectType: 'LOVER'
@@ -647,7 +737,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'COMPAT_ROMANCE_CRUSH',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_ROMANCE',
-    categoryLabel: '연애/썸',
+    categoryLabel: '연애/결혼',
     label: '짝사랑 상대',
     description: '왜 끌리는지와 관계가 자라기 쉬운지를 봅니다.',
     legacySubjectType: 'CRUSH'
@@ -656,7 +746,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'COMPAT_ROMANCE_BLIND_DATE',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_ROMANCE',
-    categoryLabel: '연애/썸',
+    categoryLabel: '연애/결혼',
     label: '소개팅 상대',
     description: '첫 만남 뒤 자연스럽게 이어질 합을 봅니다.',
     legacySubjectType: 'CRUSH'
@@ -665,7 +755,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'COMPAT_ROMANCE_FRIEND_TO_LOVER',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_ROMANCE',
-    categoryLabel: '연애/썸',
+    categoryLabel: '연애/결혼',
     label: '친구에서 연인 가능성',
     description: '편안함이 애정으로 넘어갈 수 있는지 봅니다.',
     legacySubjectType: 'FRIEND'
@@ -674,7 +764,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'COMPAT_ROMANCE_GHOSTED',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_ROMANCE',
-    categoryLabel: '연애/썸',
+    categoryLabel: '연애/결혼',
     label: '연락 끊긴 썸',
     description: '흐름이 왜 끊겼는지와 다시 이어질 포인트를 봅니다.',
     legacySubjectType: 'CRUSH'
@@ -683,7 +773,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'COMPAT_ROMANCE_LEFT_ON_READ',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_ROMANCE',
-    categoryLabel: '연애/썸',
+    categoryLabel: '연애/결혼',
     label: '읽씹하는 그 사람',
     description: '답장 템포와 감정 거리의 패턴을 봅니다.',
     legacySubjectType: 'CRUSH'
@@ -692,7 +782,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'COMPAT_FRIEND_BEST',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_FRIEND',
-    categoryLabel: '친구/인간관계',
+    categoryLabel: '친구',
     label: '베스트 친구',
     description: '편안함과 오래 가는 합을 봅니다.',
     legacySubjectType: 'FRIEND'
@@ -701,7 +791,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'COMPAT_FRIEND_CUT_OFF',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_FRIEND',
-    categoryLabel: '친구/인간관계',
+    categoryLabel: '친구',
     label: '손절 고민하는 친구',
     description: '지켜야 할 관계인지 거리 둘 관계인지 봅니다.',
     legacySubjectType: 'FRIEND'
@@ -710,7 +800,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'COMPAT_FRIEND_TRAVEL',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_FRIEND',
-    categoryLabel: '친구/인간관계',
+    categoryLabel: '친구',
     label: '여행 메이트',
     description: '같이 움직일 때 편안한지와 충돌 포인트를 봅니다.',
     legacySubjectType: 'FRIEND'
@@ -719,7 +809,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'COMPAT_FRIEND_ROOMMATE',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_FRIEND',
-    categoryLabel: '친구/인간관계',
+    categoryLabel: '친구',
     label: '룸메이트',
     description: '생활 리듬과 공간 감각의 합을 봅니다.',
     legacySubjectType: 'FRIEND'
@@ -728,7 +818,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'COMPAT_WORK_COWORKER',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_WORK',
-    categoryLabel: '직장/사회',
+    categoryLabel: '일/직장',
     label: '직장 동료',
     description: '함께 일할 때 맞는 호흡과 갈등 포인트를 봅니다.',
     legacySubjectType: 'COWORKER'
@@ -737,7 +827,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'COMPAT_WORK_BOSS',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_WORK',
-    categoryLabel: '직장/사회',
+    categoryLabel: '일/직장',
     label: '상사와 궁합',
     description: '지시와 보고의 결이 잘 맞는지 봅니다.',
     legacySubjectType: 'MANAGER_MEMBER'
@@ -746,7 +836,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'COMPAT_WORK_DIFFICULT_BOSS',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_WORK',
-    categoryLabel: '직장/사회',
+    categoryLabel: '일/직장',
     label: '까다로운 상사',
     description: '덜 부딪히고 오래 가는 일의 방식을 봅니다.',
     legacySubjectType: 'MANAGER_MEMBER'
@@ -755,7 +845,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'COMPAT_WORK_BUSINESS_PARTNER',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_WORK',
-    categoryLabel: '직장/사회',
+    categoryLabel: '일/직장',
     label: '사업 파트너',
     description: '역할 분담과 책임의 경계가 잘 맞는지 봅니다.',
     legacySubjectType: 'BUSINESS_PARTNER'
@@ -764,7 +854,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'COMPAT_WORK_WORK_DUMPER',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_WORK',
-    categoryLabel: '직장/사회',
+    categoryLabel: '일/직장',
     label: '일 떠넘기는 동료',
     description: '피로가 쌓이는 패턴과 경계 지점을 봅니다.',
     legacySubjectType: 'COWORKER'
@@ -800,7 +890,7 @@ const SCENARIO_OPTIONS: readonly ScenarioOption[] = [
     code: 'COMPAT_MISC_IDOL',
     mode: 'COMPATIBILITY',
     categoryCode: 'COMPAT_MISC',
-    categoryLabel: '아이돌/팬',
+    categoryLabel: '팬심',
     label: '아이돌과 나',
     description: '왜 강하게 끌리는지와 정서적 합을 봅니다.',
     legacySubjectType: 'CRUSH'
@@ -829,15 +919,109 @@ const LEGACY_COMPAT_TO_SCENARIO: Record<
   CompatibilityRelationType,
   ScenarioCode
 > = {
-  BASIC: 'COMPAT_ROMANCE_FLIRTING',
-  LOVER: 'COMPAT_ROMANCE_EX',
-  MARRIED: 'COMPAT_FAMILY_PARENT_CHILD',
+  BASIC: 'COMPAT_BASIC',
+  LOVER: 'COMPAT_ROMANCE_LOVER',
+  MARRIED: 'COMPAT_ROMANCE_MARRIED',
   CRUSH: 'COMPAT_ROMANCE_CRUSH',
   FRIEND: 'COMPAT_FRIEND_BEST',
   COWORKER: 'COMPAT_WORK_COWORKER',
   MANAGER_MEMBER: 'COMPAT_WORK_BOSS',
   BUSINESS_PARTNER: 'COMPAT_WORK_BUSINESS_PARTNER'
 };
+
+const SELF_CATEGORY_ORDER: Record<ScenarioCategoryCode, number> = {
+  SELF_TIMING: 0,
+  SELF_LOVE: 1,
+  SELF_CAREER: 2,
+  SELF_WEALTH: 3,
+  SELF_RELATIONSHIP: 4,
+  COMPAT_OVERVIEW: 99,
+  COMPAT_ROMANCE: 99,
+  COMPAT_FRIEND: 99,
+  COMPAT_WORK: 99,
+  COMPAT_FAMILY: 99,
+  COMPAT_MISC: 99
+};
+
+const COMPATIBILITY_CATEGORY_ORDER: Record<ScenarioCategoryCode, number> = {
+  COMPAT_OVERVIEW: 0,
+  COMPAT_ROMANCE: 1,
+  COMPAT_FRIEND: 2,
+  COMPAT_WORK: 3,
+  COMPAT_FAMILY: 4,
+  COMPAT_MISC: 5,
+  SELF_TIMING: 99,
+  SELF_LOVE: 99,
+  SELF_CAREER: 99,
+  SELF_WEALTH: 99,
+  SELF_RELATIONSHIP: 99
+};
+
+const SELF_OPTION_ORDER: Partial<Record<ScenarioCode, number>> = {
+  SELF_BASIC: 0,
+  SELF_LIFETIME_FLOW: 1,
+  SELF_DAEUN: 2,
+  SELF_YEARLY_FORTUNE: 3,
+  SELF_DAILY_FORTUNE: 4,
+  SELF_LUCK_UP: 5,
+  SELF_LOVE_GENERAL: 10,
+  SELF_LOVE_RECONCILIATION: 11,
+  SELF_LOVE_CONTACT_RETURN: 12,
+  SELF_LOVE_CONFESSION_TIMING: 13,
+  SELF_MARRIAGE_GENERAL: 14,
+  SELF_CAREER_GENERAL: 20,
+  SELF_CAREER_APTITUDE: 21,
+  SELF_CAREER_JOB_CHANGE: 22,
+  SELF_WEALTH_GENERAL: 30,
+  SELF_WEALTH_ACCUMULATION: 31,
+  SELF_WEALTH_LEAK: 32,
+  SELF_RELATIONSHIP_GENERAL: 40,
+  SELF_RELATIONSHIP_CUT_OFF: 41,
+  SELF_FAMILY_GENERAL: 42,
+  SELF_FAMILY_PARENTS: 43
+};
+
+const COMPATIBILITY_OPTION_ORDER: Partial<Record<ScenarioCode, number>> = {
+  COMPAT_BASIC: 0,
+  COMPAT_ROMANCE_LOVER: 10,
+  COMPAT_ROMANCE_FLIRTING: 11,
+  COMPAT_ROMANCE_CRUSH: 12,
+  COMPAT_ROMANCE_BLIND_DATE: 13,
+  COMPAT_ROMANCE_FRIEND_TO_LOVER: 14,
+  COMPAT_ROMANCE_LEFT_ON_READ: 15,
+  COMPAT_ROMANCE_GHOSTED: 16,
+  COMPAT_ROMANCE_EX: 17,
+  COMPAT_ROMANCE_MARRIAGE_PARTNER: 18,
+  COMPAT_ROMANCE_MARRIED: 19,
+  COMPAT_FRIEND_BEST: 20,
+  COMPAT_FRIEND_TRAVEL: 21,
+  COMPAT_FRIEND_ROOMMATE: 22,
+  COMPAT_FRIEND_CUT_OFF: 23,
+  COMPAT_WORK_COWORKER: 30,
+  COMPAT_WORK_BOSS: 31,
+  COMPAT_WORK_DIFFICULT_BOSS: 32,
+  COMPAT_WORK_BUSINESS_PARTNER: 33,
+  COMPAT_WORK_WORK_DUMPER: 34,
+  COMPAT_FAMILY_PARENT_CHILD: 40,
+  COMPAT_FAMILY_MOTHER_DAUGHTER: 41,
+  COMPAT_FAMILY_MOTHER_IN_LAW: 42,
+  COMPAT_MISC_IDOL: 50
+};
+
+function getCategoryOrder(
+  mode: ReadingMode,
+  categoryCode: ScenarioCategoryCode
+): number {
+  return mode === 'SELF'
+    ? (SELF_CATEGORY_ORDER[categoryCode] ?? Number.MAX_SAFE_INTEGER)
+    : (COMPATIBILITY_CATEGORY_ORDER[categoryCode] ?? Number.MAX_SAFE_INTEGER);
+}
+
+function getOptionOrder(mode: ReadingMode, code: ScenarioCode): number {
+  return mode === 'SELF'
+    ? (SELF_OPTION_ORDER[code] ?? Number.MAX_SAFE_INTEGER)
+    : (COMPATIBILITY_OPTION_ORDER[code] ?? Number.MAX_SAFE_INTEGER);
+}
 
 export const SELF_SCENARIO_CODES = SCENARIO_OPTIONS.filter(
   (option) => option.mode === 'SELF'
@@ -846,6 +1030,14 @@ export const SELF_SCENARIO_CODES = SCENARIO_OPTIONS.filter(
 export const COMPATIBILITY_SCENARIO_CODES = SCENARIO_OPTIONS.filter(
   (option) => option.mode === 'COMPATIBILITY'
 ).map((option) => option.code) as ScenarioCode[];
+
+function withObjectParticle(text: string): string {
+  const lastChar = text.trim().charCodeAt(text.trim().length - 1);
+  if (Number.isNaN(lastChar) || lastChar < 0xac00 || lastChar > 0xd7a3) {
+    return `${text}을`;
+  }
+  return (lastChar - 0xac00) % 28 === 0 ? `${text}를` : `${text}을`;
+}
 
 export function getScenarioOption(code: string): ScenarioOption | null {
   return SCENARIO_MAP.get(code as ScenarioCode) ?? null;
@@ -906,8 +1098,8 @@ export function getScenarioFallbackSummary(
 
   const label = getScenarioLabel(readingType, subjectType);
   return readingType === 'SELF'
-    ? `${label}을 중심으로 지금의 운을 읽은 풀이입니다.`
-    : `${label}을 중심으로 두 사람 사이의 결을 읽은 궁합입니다.`;
+    ? `${withObjectParticle(label)} 중심으로 지금의 운을 읽은 풀이입니다.`
+    : `${withObjectParticle(label)} 중심으로 두 사람 관계 흐름을 읽은 궁합입니다.`;
 }
 
 export function getLegacySubjectTypeFromCode(
@@ -952,7 +1144,24 @@ export function getScenarioCategories(mode: ReadingMode): Array<{
   description: string;
   options: ScenarioOption[];
 }> {
-  const filtered = SCENARIO_OPTIONS.filter((option) => option.mode === mode);
+  const filtered = SCENARIO_OPTIONS.filter(
+    (option) => option.mode === mode
+  ).sort((left, right) => {
+    const categoryDiff =
+      getCategoryOrder(mode, left.categoryCode) -
+      getCategoryOrder(mode, right.categoryCode);
+    if (categoryDiff !== 0) {
+      return categoryDiff;
+    }
+
+    const optionDiff =
+      getOptionOrder(mode, left.code) - getOptionOrder(mode, right.code);
+    if (optionDiff !== 0) {
+      return optionDiff;
+    }
+
+    return left.label.localeCompare(right.label, 'ko');
+  });
   const grouped = new Map<
     ScenarioCategoryCode,
     {
@@ -978,11 +1187,14 @@ export function getScenarioCategories(mode: ReadingMode): Array<{
     });
   }
 
-  return Array.from(grouped.values());
+  return Array.from(grouped.values()).sort(
+    (left, right) =>
+      getCategoryOrder(mode, left.code) - getCategoryOrder(mode, right.code)
+  );
 }
 
 export function getDefaultScenarioCode(mode: ReadingMode): ScenarioCode {
-  return mode === 'SELF' ? 'SELF_BASIC' : 'COMPAT_ROMANCE_FLIRTING';
+  return mode === 'SELF' ? 'SELF_BASIC' : 'COMPAT_BASIC';
 }
 
 export function getScenarioLoadingMeta(

@@ -26,6 +26,7 @@ import {
 import { MBTI_TYPE_VALUES, type MbtiTypeValue } from '@/lib/mbti/test-engine';
 import { onboardingCreateSchema } from '@/lib/validators/onboarding';
 import { LoadingOverlay } from '@/components/loading/LoadingOverlay';
+import { PageLoadingState } from '@/components/loading/PageLoadingState';
 import { ThemedBrandLogo } from '@/components/theme/ThemedBrandLogo';
 
 type OnboardingResponse = {
@@ -224,25 +225,16 @@ export default function OnboardingPage() {
 
   if (!sessionReady || (isAuthenticated && fetching)) {
     return (
-      <main className="min-h-screen">
-        <LoadingOverlay
-          open
-          mode="SELF"
-          theme="timing"
-          icon="sparkles"
-          title="내 정보를 불러오고 있어요."
-          description="사주를 읽기 위한 기본 정보를 차분히 정리하고 있어요."
-          messages={[
-            '생년월일과 MBTI 정보를 함께 맞춰 보고 있어요.',
-            '타고난 사주를 세울 준비를 하고 있어요.'
-          ]}
-        />
-      </main>
+      <PageLoadingState
+        title="내 정보를 불러오고 있어요."
+        description="사주를 읽기 위한 기본 정보를 차분히 정리하고 있어요."
+        pageClassName="max-w-2xl"
+      />
     );
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-2xl items-center px-4 py-6 sm:px-6 sm:py-10">
+    <main className="theme-spring-shell theme-spring-shell--medium mx-auto flex min-h-screen w-full max-w-2xl items-center px-4 py-6 sm:px-6 sm:py-10">
       <Card className="theme-card-ornament theme-surface w-full">
         <CardHeader>
           <div className="space-y-3">
